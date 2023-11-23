@@ -4,16 +4,17 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 // 视图
 import App from "./App.vue";
-import Main from "./components/Main.vue"
-import Login from "./components/Login.vue"
+import PreLoad from "./components/PreLoad.vue";
+import Main from "./components/Main.vue";
+import Login from "./components/Login.vue";
 
 // 样式表
 import "./styles.css";
 import "primevue/resources/primevue.min.css";
 import "primevue/resources/themes/md-dark-indigo/theme.css"
-import "primeflex/primeflex.css"
-import "primeflex/themes/primeone-dark.css"
-import 'primeicons/primeicons.css'
+import "primeflex/primeflex.css";
+import "primeflex/themes/primeone-dark.css";
+import 'primeicons/primeicons.css';
 
 // 控件
 import PrimeVue from "primevue/config";
@@ -115,19 +116,27 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
+
+localStorage.removeItem("isLoggedIn");
 const routes = [
-    { path: '/', component: Main, },
+    { path: '/', component: PreLoad },
     { path: '/login', component: Login },
+    { path: '/dashboard', component: Main, },
 ]
 const router = createRouter({
     history: createWebHashHistory(),
     routes: routes,
 })
 router.beforeEach((to, _from, next) => {
-    if (to.path === "/login") {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (to.path === "/") {
         next();
     } else {
-        next({ path: "/login" })
+        if (!isLoggedIn) {
+            next({ path: "/" })
+        } else {
+            next();
+        }
     }
 })
 
