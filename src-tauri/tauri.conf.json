@@ -36,9 +36,9 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "moonstone",
-        "width": 800,
-        "height": 600
+        "title": "Moonstone",
+        "width": 1000,
+        "height": 700
       }
     ]
   }

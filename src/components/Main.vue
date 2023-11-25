@@ -1,17 +1,18 @@
 <script setup lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-// PrimeVue 控件
-// import Splitter from 'primevue/splitter';
-// import SplitterPanel from 'primevue/splitterpanel';
+
 // UI 控件
 import SideToolBar from "./Main/SideToolBar.vue"
 import Sessions from "./Main/Sessions.vue"
-import Messages from './Main/Messages.vue';
+import Messages from './Main/EditorPanel.vue';
 </script>
 
 <template>
-    <Splitter style="height: 100vh">
+    <Splitter style="height: 100vh" :pt="{
+        gutter: { style: 'width: 3px; cursor: ew-resize' },
+        gutterHandler: { style: 'display: none' }
+    }">
         <SplitterPanel class="flex align-items-center justify-content-center fixed-width-panel" :size="15" :minSize="15"
             :maxSize="15">
             <SideToolBar />
@@ -20,16 +21,25 @@ import Messages from './Main/Messages.vue';
             <Sessions />
         </SplitterPanel>
         <SplitterPanel :size="65">
-            <Splitter layout="vertical">
-                <SplitterPanel class="flex align-items-center justify-content-center" :size="15"> Panel 2 </SplitterPanel>
-                <SplitterPanel :size="85">
-                    <Splitter>
+            <Splitter layout="vertical" :pt="{
+                gutter: { style: 'height: 3px; cursor: ns-resize' },
+                gutterHandler: { style: 'display: none' }
+            }">
+                <SplitterPanel class="flex align-items-center justify-content-center" :size="10"> Panel 2 </SplitterPanel>
+                <SplitterPanel :size="75">
+                    <!-- <Splitter :pt="{
+                        gutter: { style: 'width: 3px; cursor: ew-resize' },
+                        gutterHandler: { style: 'display: none' }
+                    }">
                         <SplitterPanel class="flex align-items-center justify-content-center" :size="20"> Panel 3
                         </SplitterPanel>
                         <SplitterPanel class="flex align-items-center justify-content-center" :size="80">
-                            <Messages />
+                            cwerfre
                         </SplitterPanel>
-                    </Splitter>
+                    </Splitter> -->
+                </SplitterPanel>
+                <SplitterPanel :size="15">
+                    <Messages />
                 </SplitterPanel>
             </Splitter>
         </SplitterPanel>

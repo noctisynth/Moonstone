@@ -9,9 +9,15 @@ fn login(username: &str, password: &str) -> bool {
     true
 }
 
+#[tauri::command]
+fn session_alive(session: &str) -> bool {
+    println!("检测到session: {}", session);
+    true
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![login])
+        .invoke_handler(tauri::generate_handler![login, session_alive])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

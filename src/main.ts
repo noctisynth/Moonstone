@@ -129,11 +129,19 @@ const router = createRouter({
 })
 router.beforeEach((to, _from, next) => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (to.path === "/") {
-        next();
+    if (to.path === "/login") {
+        if (isLoggedIn) {
+            next({ path: "/dashboard" })
+        } else {
+            next();
+        }
     } else {
         if (!isLoggedIn) {
-            next({ path: "/" })
+            if (to.path != "/") {
+                next({ path: "/" });
+            } else {
+                next();
+            }
         } else {
             next();
         }
