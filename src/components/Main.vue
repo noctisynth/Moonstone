@@ -5,7 +5,8 @@
 // UI 控件
 import SideToolBar from "./Main/SideToolBar.vue"
 import Sessions from "./Main/Sessions.vue"
-import Messages from './Main/EditorPanel.vue';
+import EditorPanel from './Main/EditorPanel.vue';
+import TopBar from "./Main/TopBar.vue";
 </script>
 
 <template>
@@ -25,7 +26,7 @@ import Messages from './Main/EditorPanel.vue';
                 gutter: { style: 'height: 3px; cursor: ns-resize' },
                 gutterHandler: { style: 'display: none' }
             }">
-                <SplitterPanel class="flex align-items-center justify-content-center" :size="10"> Panel 2 </SplitterPanel>
+                <SplitterPanel class="flex align-items-center justify-content-center" :size="10"> <TopBar /> </SplitterPanel>
                 <SplitterPanel :size="75">
                     <!-- <Splitter :pt="{
                         gutter: { style: 'width: 3px; cursor: ew-resize' },
@@ -39,7 +40,7 @@ import Messages from './Main/EditorPanel.vue';
                     </Splitter> -->
                 </SplitterPanel>
                 <SplitterPanel :size="15">
-                    <Messages />
+                    <EditorPanel />
                 </SplitterPanel>
             </Splitter>
         </SplitterPanel>

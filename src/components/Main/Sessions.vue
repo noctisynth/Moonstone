@@ -1,37 +1,58 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-</script>
+import { ref } from 'vue';
 
+const sessions = ref([
+    {
+        key: '0',
+        label: '信道',
+        data: '信道列表',
+        icon: 'pi pi-fw pi-inbox',
+        children: [
+            {
+                key: '0-0',
+                label: '3691 信道',
+                icon: 'pi pi-fw pi-sign-in',
+            },
+        ],
+    },
+    {
+        key: '1',
+        label: '联系人',
+        data: '联系人',
+        icon: 'pi pi-fw pi-users',
+        children: [
+            {
+                key: '1-0',
+                label: '雪花',
+                icon: 'pi pi-fw pi-user',
+            },
+            {
+                key: '1-1',
+                label: '是源道呀',
+                icon: 'pi pi-fw pi-user',
+            },
+        ],
+    },
+    {
+        key: '2',
+        label: '房间',
+        icon: 'pi pi-fw pi-home',
+        children: [
+            {
+                key: '1-0',
+                label: 'Noctisynth',
+                icon: 'pi pi-fw pi-user',
+            },
+        ],
+    },
+]);
+
+</script>
+  
 <template>
-    <div>
-        <div class="p-col-6">
-            <i class="pi pi-comment box"></i>
-        </div>
-        <div class="p-col-6">
-            <i class="pi pi-user box"></i>
-        </div>
-        <div class="p-col-6">
-            <i class="pi pi-envelope box"></i>
-        </div>
-        <div class="p-col-6">
-            <i class="pi pi-shield box"></i>
-        </div>
-        <div class="p-col-6">
-            <i class="pi pi-cog box"></i>
-        </div>
+    <div class="card flex justify-content-center h-full">
+        <Tree :value="sessions" :filter="true" filterMode="lenient" class="w-full"></Tree>
     </div>
 </template>
 
-<style scoped>
-
-.box {
-    border: 2px solid #ddd;
-    border-radius: 40%;
-    padding: 12px;
-    margin: 30px;
-}
-.box:hover {
-    background-color: #2e3c67;
-}
-</style>
+<style scoped></style>
