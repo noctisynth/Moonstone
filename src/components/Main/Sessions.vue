@@ -50,8 +50,8 @@ const sessions = ref([
 </script>
   
 <template>
-    <div class="card flex justify-content-center h-full">
-        <Tree :value="sessions" :filter="true" filterMode="lenient" class="w-full"></Tree>
+    <div class="card flex justify-content-center h-full w-full">
+        <Tree id="sessions" :value="sessions" :filter="true" filterMode="lenient" class="w-full"></Tree>
     </div>
 </template>
 

@@ -39,7 +39,7 @@ import TopBar from "./Main/TopBar.vue";
                         </SplitterPanel>
                     </Splitter> -->
                 </SplitterPanel>
-                <SplitterPanel :size="15">
+                <SplitterPanel :size="15" style="overflow: hidden;">
                     <EditorPanel />
                 </SplitterPanel>
             </Splitter>

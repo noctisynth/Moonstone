@@ -24,8 +24,8 @@ const onSubmit = handleSubmit((values) => {
 </script>
 
 <template>
-    <form @submit="onSubmit" style="height: 100%;">
-        <Editor v-model="message" editorStyle="height: 15vh">
+    <form @submit="onSubmit" class="h-full">
+        <Editor v-model="message" style="height: calc(100% - 42px);">
             <template v-slot:toolbar>
                 <span class="ql-formats flex">
                     <div style="margin-right: auto;">
