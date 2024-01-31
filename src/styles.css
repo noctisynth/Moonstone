@@ -97,3 +97,22 @@ button {
     background-color: #0f0f0f69;
   } */
 }
+
+#sessions ul {
+  overflow-x: hidden;
+}
+
+#sessions ul .p-treenode-content,
+#sessions ul .p-treenode {
+  padding: 0;
+}
+
+#sessions ul .p-treenode-children {
+  padding: 0;
+}
+
+#sessions ul .p-treenode-label {
+  white-space: nowrap;
+  width: 0;
+  text-overflow: ellipsis;
+}
