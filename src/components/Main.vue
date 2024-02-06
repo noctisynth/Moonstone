@@ -28,7 +28,7 @@ import Messages from "./Main/Messages.vue";
                 gutterHandler: { style: 'display: none' }
             }">
                 <SplitterPanel class="flex align-items-center justify-content-center" :size="10"> <TopBar /> </SplitterPanel>
-                <SplitterPanel :size="65">
+                <SplitterPanel :size="65" style="overflow-y: auto;">
                     <Messages />
                 </SplitterPanel>
                 <SplitterPanel :size="25" style="overflow: hidden;">

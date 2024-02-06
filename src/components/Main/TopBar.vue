@@ -2,18 +2,19 @@
 </script>
 
 <template>
-    <div class="flex w-full justify-content-center align-items-center">
-        <div class="col-8">
-            <div class="text-left p-3 font-bold">
+    <div class="card w-full">
+        <Toolbar style="border-radius: 3rem; padding: 1rem 1rem 1rem 1.5rem">
+            <template #start>
                 雪花
-            </div>
-        </div>
-        <div class="flex col">
-            <i class="pi p-3 pi-phone"></i>
-            <i class="pi p-3 pi-video"></i>
-            <i class="pi p-3 pi-envelope"></i>
-            <i class="pi p-3 pi-ellipsis-h"></i>
-        </div>
+            </template>
+
+            <template #end>
+                <Button icon="pi pi-phone" class="mr-2" text plain></Button>
+                <Button icon="pi pi-video" class="mr-2" text plain></Button>
+                <Button icon="pi pi-envelope" class="mr-2" text plain></Button>
+                <Button icon="pi pi-ellipsis-h" text plain></Button>
+            </template>
+        </Toolbar>
     </div>
 </template>
 

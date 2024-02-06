@@ -2,61 +2,53 @@
 import { ref } from "vue";
 
 const selectedMessage = ref();
-const groupedMessages = ref([
+const messages = ref([
     {
-        label: '雪花',
+        user: {
+            nickname: '雪花'
+        },
+        sequence: '',
+        timestamp: '2024/2/6 19:54',
         items: [
-            { label: '我要跑路！', value: 'Berlin' },
-            { label: '跑路跑路', value: 'Frankfurt' },
+            {
+                text: '我要跑路',
+                timestamp: '2024/2/6 19:54',
+            },
+            {
+                text: '跑路跑路',
+                timestamp: '2024/2/6 19:54',
+            },
         ]
     },
     {
-        label: '苏向夜',
-        code: 'US',
+        user: {
+            nickname: '苏向夜'
+        },
+        sequence: '',
         items: [
-            { label: '不许跑', value: 'Chicago' },
-        ]
-    },
-    {
-        label: '雪花',
-        code: 'JP',
-        items: [
-            { label: '就要跑', value: 'Kyoto' },
-        ]
-    },
-    {
-        label: '苏向夜',
-        code: 'JP',
-        items: [
-            { label: '谴责！', value: 'fre' },
-        ]
-    },
-    {
-        label: '雪花',
-        code: 'JP',
-        items: [
-            { label: '不许谴责！', value: 'Kyoto' },
-        ]
-    },
-    {
-        label: '苏向夜',
-        code: 'JP',
-        items: [
-            { label: '谴责！', value: 'Kyoto' },
+            {
+                text: '不许跑',
+                timestamp: '2024/2/6 19:54',
+            },
         ]
     },
 ]);
 </script>
 
 <template>
-    <div class="card w-full flex justify-content-center">
-        <Listbox v-model="selectedMessage" :options="groupedMessages" optionLabel="label" optionGroupLabel="label"
-            optionGroupChildren="items" class="w-full h-full" listStyle="max-height: 480px">
-            <!-- <template #optiongroup="slotProps">
+    <div class="card w-full flex justify-content-center h-full">
+        <Listbox v-model="selectedMessage" :options="messages" optionLabel="label" optionGroupLabel="label"
+            optionGroupChildren="items" class="w-full h-full">
+            <template #optiongroup="slot">
                 <div class="flex align-items-center">
-                    <div>{{ slotProps.option.label }}</div>
+                    <div>{{ slot.option.user.nickname }}</div>
                 </div>
-            </template> -->
+            </template>
+            <template #option="slot">
+                <!-- <div class="flex align-items-center"> -->
+                <Button v-tooltip.bottom="slot.option.timestamp" plain text>{{ slot.option.text }}</Button>
+                <!-- </div> -->
+            </template>
         </Listbox>
     </div>
 </template>
