@@ -8,10 +8,18 @@ import Sessions from "./Main/Sessions.vue"
 import EditorPanel from './Main/EditorPanel.vue';
 import TopBar from "./Main/TopBar.vue";
 import Messages from "./Main/Messages.vue";
+
+import { ref } from 'vue';
+
+let session = ref()
+
+function sessionChanged(node: any) {
+    session.value = node;
+}
 </script>
 
 <template>
-    <Splitter style="height: 100vh" :pt="{
+    <Splitter class="h-full" style="border: none;" :pt="{
         gutter: { style: 'width: 3px; cursor: ew-resize' },
         gutterHandler: { style: 'display: none' }
     }">
@@ -20,14 +28,16 @@ import Messages from "./Main/Messages.vue";
             <SideToolBar />
         </SplitterPanel>
         <SplitterPanel class="flex align-items-center justify-content-center" :size="20">
-            <Sessions />
+            <Sessions @session-changed="sessionChanged"/>
         </SplitterPanel>
         <SplitterPanel :size="65">
-            <Splitter layout="vertical" :pt="{
+            <Splitter v-if="session" layout="vertical" :pt="{
                 gutter: { style: 'height: 3px; cursor: ns-resize' },
                 gutterHandler: { style: 'display: none' }
             }">
-                <SplitterPanel class="flex align-items-center justify-content-center" :size="10"> <TopBar /> </SplitterPanel>
+                <SplitterPanel class="flex align-items-center justify-content-center" :size="10">
+                    <TopBar v-model="session"/>
+                </SplitterPanel>
                 <SplitterPanel :size="65" style="overflow-y: auto;">
                     <Messages />
                 </SplitterPanel>
@@ -41,9 +51,9 @@ import Messages from "./Main/Messages.vue";
 
 <style scoped>
 .fixed-width-panel {
-    flex: 0 0 10vw;
-    min-width: 10vw;
-    max-width: 10vw;
+    /* flex: 0 0 3vw; */
+    min-width: 8vw;
+    max-width: 8vw;
 }
 </style>
 

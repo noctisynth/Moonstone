@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const emit = defineEmits(['sessionChanged'])
+
 const sessions = ref([
     {
-        key: '0',
+        key: 'tunnel',
         label: '信道',
         data: '信道列表',
         icon: 'pi pi-fw pi-inbox',
@@ -16,7 +18,7 @@ const sessions = ref([
         ],
     },
     {
-        key: '1',
+        key: 'user',
         label: '联系人',
         data: '联系人',
         icon: 'pi pi-fw pi-users',
@@ -34,7 +36,7 @@ const sessions = ref([
         ],
     },
     {
-        key: '2',
+        key: 'room',
         label: '房间',
         icon: 'pi pi-fw pi-home',
         children: [
@@ -47,11 +49,18 @@ const sessions = ref([
     },
 ]);
 
+const onSessionSelect = (node: any) => {
+    if (!["tunnel", "user", "room"].includes(node.key)) {
+        emit("sessionChanged", node);
+    }
+};
 </script>
-  
+
 <template>
     <div class="card flex justify-content-center h-full w-full">
-        <Tree id="sessions" :value="sessions" :filter="true" filterMode="lenient" class="w-full"></Tree>
+        <Tree id="sessions" style="border: none;" :filter="true" filterMode="lenient" :value="sessions"
+            selectionMode="single" @nodeSelect="onSessionSelect" class="w-full">
+        </Tree>
     </div>
 </template>
 

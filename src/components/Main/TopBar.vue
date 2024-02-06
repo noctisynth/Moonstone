@@ -1,11 +1,12 @@
 <script setup lang="ts">
+const session: any = defineModel()
 </script>
 
 <template>
     <div class="card w-full">
-        <Toolbar style="border-radius: 3rem; padding: 1rem 1rem 1rem 1.5rem">
+        <Toolbar style="border: none; padding: 1rem 1rem 1rem 1.5rem">
             <template #start>
-                雪花
+                {{ session.label }}
             </template>
 
             <template #end>
