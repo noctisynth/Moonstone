@@ -7,6 +7,7 @@ import SideToolBar from "./Main/SideToolBar.vue"
 import Sessions from "./Main/Sessions.vue"
 import EditorPanel from './Main/EditorPanel.vue';
 import TopBar from "./Main/TopBar.vue";
+import Messages from "./Main/Messages.vue";
 </script>
 
 <template>
@@ -27,19 +28,10 @@ import TopBar from "./Main/TopBar.vue";
                 gutterHandler: { style: 'display: none' }
             }">
                 <SplitterPanel class="flex align-items-center justify-content-center" :size="10"> <TopBar /> </SplitterPanel>
-                <SplitterPanel :size="75">
-                    <!-- <Splitter :pt="{
-                        gutter: { style: 'width: 3px; cursor: ew-resize' },
-                        gutterHandler: { style: 'display: none' }
-                    }">
-                        <SplitterPanel class="flex align-items-center justify-content-center" :size="20"> Panel 3
-                        </SplitterPanel>
-                        <SplitterPanel class="flex align-items-center justify-content-center" :size="80">
-                            cwerfre
-                        </SplitterPanel>
-                    </Splitter> -->
+                <SplitterPanel :size="65">
+                    <Messages />
                 </SplitterPanel>
-                <SplitterPanel :size="15" style="overflow: hidden;">
+                <SplitterPanel :size="25" style="overflow: hidden;">
                     <EditorPanel />
                 </SplitterPanel>
             </Splitter>
