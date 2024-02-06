@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useRouter } from "vue-router";
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
 
 const router = useRouter();
 const info = ref("");
@@ -12,6 +13,10 @@ const fetchData = async () => {
     let callback: { status: boolean; is_alive: boolean; error: string };
 
     if (localStorage.getItem("session_key") != null && localStorage.getItem("server") != null) {
+        let permissionGranted = await isPermissionGranted();
+        if (!permissionGranted) {
+            await requestPermission();
+        }
         callback = JSON.parse(
             await invoke("session_alive", { server: localStorage.getItem("server"), sessionkey: localStorage.getItem("session_key") })
         );
@@ -19,16 +24,20 @@ const fetchData = async () => {
             if (!callback.is_alive) {
                 info.value = "";
                 error.value = "登录验证失败，请重新登陆！";
+                sendNotification({ title: '月光石', body: error.value });
                 localStorage.removeItem("session_key");
                 localStorage.removeItem("isLoggedIn");
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 return false;
             } else {
+                info.value = "登录验证成功！";
+                sendNotification({ title: '月光石', body: info.value });
                 return true;
             }
         } else {
             info.value = "";
             error.value = callback["error"];
+            sendNotification({ title: '月光石', body: error.value });
             await new Promise(resolve => setTimeout(resolve, 2000));
             return false;
         }
