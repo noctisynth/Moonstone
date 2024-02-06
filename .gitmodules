@@ -1,0 +1,3 @@
+[submodule "src-tauri/oblivion"]
+	path = src-tauri/oblivion
+	url = https://github.com/noctisynth/oblivion-rust.git
