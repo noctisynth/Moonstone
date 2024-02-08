@@ -1,46 +1,81 @@
 <script setup lang="ts">
-import { useToast } from 'primevue/usetoast';
-import { useField, useForm } from 'vee-validate';
-import Editor from 'primevue/editor';
+import Vditor from 'vditor';
+import { ref, onMounted, Ref } from 'vue';
+import 'vditor/dist/index.css';
 
-const { handleSubmit, resetForm } = useForm();
-const { value: message, errorMessage: _ } = useField('value', validateField);
-const toast = useToast();
+const vditor: Ref<Vditor | undefined> = ref();
 
-function validateField(value: any) {
-    if (!value) {
-        return 'Content is required.';
-    }
 
-    return true;
-}
-
-const onSubmit = handleSubmit((values) => {
-    if (values.value && values.value.length > 0) {
-        toast.add({ severity: 'info', summary: 'Blog Submitted', detail: 'The blog is uploaded', life: 3000 });
-        resetForm();
-    }
+onMounted(() => {
+    vditor.value = new Vditor('vditor', {
+        theme: 'dark',
+        height: '100%',
+        mode: 'ir',
+        icon: 'material',
+        cache: {
+            enable: false,
+        },
+        toolbar: [
+            'emoji', 'bold', 'italic', 'strike', 'link',
+            '|',
+            'line',
+            'quote',
+            'list',
+            'ordered-list',
+            'check',
+            '|',
+            'inline-code',
+            'code',
+        ],
+        counter: {
+            enable: true,
+            max: 512,
+        },
+    });
 });
+
+const session: any = defineModel('session')
+let messages: any = defineModel('messages')
+
+
+function onSubmit() {
+    const value = vditor.value?.getValue();
+    const trimed_value = value?.replace("\n", "").trim();
+    vditor.value?.setValue("", true);
+
+    if (trimed_value && trimed_value.length > 0) {
+        // console.log(messages.value[messages.value.length - 1])
+        // console.log(messages.value[1])
+        messages.value.push({
+            user: {
+                nickname: '苏向夜',
+            },
+            sequence: 'xxxx',
+            timestamp: '2024/2/6 19:54',
+            items: [
+                {
+                    text: value,
+                    status: 'sending',
+                    timestamp: '2024/2/6 19:54',
+                },
+            ]
+        });
+        console.log(session.value === null);
+    }
+};
+
+function clear() {
+    const value = vditor.value?.getValue().replace("\n", "").trim();
+    console.log(value === "")
+    if (!value)
+        vditor.value?.setValue("")
+}
 </script>
 
 <template>
-    <form @submit="onSubmit" class="h-full">
-        <Editor v-model="message" style="height: calc(100% - 42px);">
-            <template v-slot:toolbar>
-                <span class="ql-formats flex">
-                    <div style="margin-right: auto;">
-                        <button class="ql-bold"></button>
-                        <button class="ql-italic"></button>
-                        <button class="ql-underline"></button>
-                    </div>
-                    <Button class="flex justify-content-center text-white w-auto">
-                        <i class="pi pi-send"></i>
-                    </Button>
-                </span>
-
-            </template>
-        </Editor>
-    </form>
+    <div class="h-full text-white">
+        <div id="vditor" @keyup.alt.enter.exact="onSubmit" @keyup.enter="clear"></div>
+    </div>
 </template>
 
 <style scoped></style>

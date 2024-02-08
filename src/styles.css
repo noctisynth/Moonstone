@@ -1,11 +1,9 @@
 :root {
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 16px;
+
     line-height: 24px;
-    font-weight: 400;
 
     color: #0f0f0f;
-    background-color: #f6f6f6;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -34,14 +32,43 @@
 }
 
 .p-listbox-list {
-    padding: 0.5rem 0rem;
+    padding: 0.5rem 0.5rem;
 }
 
 .p-listbox-item {
-    padding: 0rem 0rem;
+    padding: 0.2rem 1.5rem;
 }
 
 .p-listbox-item-group {
-    padding: 1rem;
-    padding-bottom: 0;
+    padding: 1.5rem;
+    padding-bottom: 0.2rem;
+}
+
+.p-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 1rem;
+    height: 1rem;
+    line-height: 1.5rem;
+}
+
+.vditor-ir pre.vditor-reset:focus {
+    outline: none;
+    background-color: unset;
+}
+
+.vditor-ir pre.vditor-reset {
+    background-color: unset;
+}
+
+.vditor-reset {
+    color: unset;
+}
+
+.vditor-toolbar {
+    background-color: unset;
+}
+
+.vditor {
+    font-family: unset;
 }
