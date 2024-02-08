@@ -2,9 +2,56 @@
 import Vditor from 'vditor';
 import { ref, onMounted, Ref } from 'vue';
 import 'vditor/dist/index.css';
+import { v4 as uuid4 } from 'uuid';
 
+let messages: any = defineModel('messages')
 const vditor: Ref<Vditor | undefined> = ref();
 
+
+function onSubmit() {
+    const value = vditor.value?.getValue();
+    const trimed_value = value?.replace("\n", "").trim();
+
+    if (trimed_value && trimed_value.length > 0) {
+        const uuid = uuid4();
+
+        let last_user_id = null;
+        if (messages.value.length > 0)
+            last_user_id = messages.value[messages.value.length - 1].user.id;
+
+        if (last_user_id === "0") {
+            messages.value[messages.value.length - 1].items.push({
+                text: value,
+                sequence: uuid,
+                status: 'sending',
+                timestamp: '2024/2/6 19:54',
+            })
+        } else {
+            messages.value.push({
+                user: {
+                    id: '0',
+                    nickname: '苏向夜',
+                },
+                timestamp: '2024/2/6 19:54',
+                items: [
+                    {
+                        text: value,
+                        sequence: uuid,
+                        status: 'sending',
+                        timestamp: '2024/2/6 19:54',
+                    },
+                ]
+            });
+        };
+    };
+    vditor.value?.setValue("", true);
+};
+
+function clear() {
+    const value = vditor.value?.getValue().replace("\n", "").trim();
+    if (!value)
+        vditor.value?.setValue("")
+}
 
 onMounted(() => {
     vditor.value = new Vditor('vditor', {
@@ -33,48 +80,11 @@ onMounted(() => {
         },
     });
 });
-
-const session: any = defineModel('session')
-let messages: any = defineModel('messages')
-
-
-function onSubmit() {
-    const value = vditor.value?.getValue();
-    const trimed_value = value?.replace("\n", "").trim();
-    vditor.value?.setValue("", true);
-
-    if (trimed_value && trimed_value.length > 0) {
-        // console.log(messages.value[messages.value.length - 1])
-        // console.log(messages.value[1])
-        messages.value.push({
-            user: {
-                nickname: '苏向夜',
-            },
-            sequence: 'xxxx',
-            timestamp: '2024/2/6 19:54',
-            items: [
-                {
-                    text: value,
-                    status: 'sending',
-                    timestamp: '2024/2/6 19:54',
-                },
-            ]
-        });
-        console.log(session.value === null);
-    }
-};
-
-function clear() {
-    const value = vditor.value?.getValue().replace("\n", "").trim();
-    console.log(value === "")
-    if (!value)
-        vditor.value?.setValue("")
-}
 </script>
 
 <template>
     <div class="h-full text-white">
-        <div id="vditor" @keyup.alt.enter.exact="onSubmit" @keyup.enter="clear"></div>
+        <div id="vditor" @keydown.alt.enter.exact="onSubmit" @keyup.enter="clear"></div>
     </div>
 </template>
 

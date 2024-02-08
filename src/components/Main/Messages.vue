@@ -7,7 +7,6 @@ const selectedMessage = ref();
 let messages: any = defineModel()
 
 function render(text: string) {
-    console.log(text.split("\n\n").length)
     if (text.split("\n\n").length <= 1) return text
     else return md.render(text)
 }
@@ -15,8 +14,11 @@ function render(text: string) {
 
 <template>
     <div class="card w-full flex justify-content-center h-full">
-        <Listbox v-model="selectedMessage" :options="messages" optionGroupLabel=" " optionGroupChildren="items"
-            class="w-full h-full">
+        <Listbox v-model="selectedMessage" :options="messages" optionLabel="text" optionValue="sequence"
+            optionGroupLabel="user.nickname" optionGroupChildren="items" class="w-full h-full">
+            <template #empty>
+                <p></p>
+            </template>
             <template #optiongroup="slot">
                 <div class="flex align-items-center">
                     <div>{{ slot.option.user.nickname }}</div>
