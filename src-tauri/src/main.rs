@@ -3,10 +3,12 @@
 
 pub mod api {
     pub mod account;
+    pub mod session;
 }
 pub mod exceptions;
 
-use api::account::{account, login, session};
+use api::account::{account, login};
+use api::session::alive;
 use serde_json::json;
 
 #[tauri::command]
@@ -23,7 +25,7 @@ async fn login_handler(server: &str, identity: &str, password: &str) -> Result<S
 
 #[tauri::command]
 async fn session_alive(server: &str, sessionkey: &str) -> Result<String, ()> {
-    match session(server, sessionkey).await {
+    match alive(server, sessionkey).await {
         Ok(is_alive) => Ok(json!({"status": true, "is_alive": is_alive, "error": ""}).to_string()),
         Err(error) => {
             Ok(json!({"status": false, "is_alive": false, "error": error.to_string()}).to_string())

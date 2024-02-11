@@ -2,7 +2,7 @@ use oblivion::exceptions::OblivionException;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum QuantumixException {
+pub enum Exception {
     #[error("账户标识[{identity}]使用密钥[{password}]身份验证失败")]
     AuthenticationFailed { identity: String, password: String },
     #[error("向服务端发起请求失败: {error:?}, 这可能是服务端遭到网络攻击")]
