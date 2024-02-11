@@ -2045,7 +2045,7 @@ dependencies = [
 
 [[package]]
 name = "moonstone"
-version = "0.0.1"
+version = "0.1.0-alpha.1"
 dependencies = [
  "oblivion",
  "serde",

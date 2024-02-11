@@ -1,6 +1,6 @@
 [package]
 name = "moonstone"
-version = "0.0.1"
+version = "0.1.0-alpha.1"
 description = "MoonStone E2EE IM"
 authors = ["苏向夜 <fu050409@163.com>"]
 license = "Apache-2.0"
