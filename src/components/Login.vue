@@ -8,10 +8,11 @@ import InputIcon from 'primevue/inputicon';
 import Card from 'primevue/card';
 import Stepper from 'primevue/stepper';
 import StepperPanel from 'primevue/stepperpanel';
+import Inplace from 'primevue/inplace';
 
 import { invoke } from "@tauri-apps/api/core";
 import { useField, useForm } from 'vee-validate';
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "../stores/theme";
 import { usePrimeVue } from "primevue/config";
@@ -88,39 +89,120 @@ const login = handleSubmit(async () => {
 const themestore = useThemeStore()
 const PrimeVue = usePrimeVue()
 const active = ref(0)
-const checkStatus = ref(0)
+const checkStep = ref(0)
+const checkStatus = ref<string | null>()
+const inCheckProgress = ref<boolean>(true)
+const allChecksOk = ref<boolean>(false)
+const checkFailedMessage = ref<string | null>()
 const allChecks = ref([
   {
-    label: '网络检查'
+    label: '网络连接'
   },
   {
-    label: '安全检查'
+    label: '系统环境'
+  },
+  {
+    label: '网络环境'
   },
 ])
+
+async function checkEnvironment() {
+  checkStep.value = 0
+  checkStatus.value = null
+  inCheckProgress.value = true
+  checkFailedMessage.value = null
+  checkStatus.value = "检查网络连接中..."
+  const internet = await invoke("check_internet")
+  if (internet) {
+    checkStatus.value = "检查系统环境中..."
+    checkStep.value = 1;
+    const system = await invoke("check_system")
+    if (system) {
+      checkStep.value = 2;
+      checkStatus.value = "检查网络环境中..."
+      const security = await invoke("check_security")
+      inCheckProgress.value = false
+      if (security) {
+        checkStatus.value = "环境检查完毕."
+        allChecksOk.value = true;
+      } else {
+        inCheckProgress.value = false
+        checkStatus.value = null;
+        checkFailedMessage.value = "网络环境存在风险，请确保你在安全的网络环境登入，否则你可能遭到网络审查或网络攻击！"
+      }
+    } else {
+      inCheckProgress.value = false
+      checkFailedMessage.value = "系统环境存在异常，请确保你在安全的设备登入！"
+      checkStatus.value = null;
+    }
+  } else {
+    inCheckProgress.value = false
+    checkFailedMessage.value = "网络连接失败，请检查你的网络连接。"
+    checkStatus.value = null;
+  }
+}
+onMounted(async () => {
+  await checkEnvironment()
+})
 </script>
 
 <template>
   <main class="w-full h-full">
     <div class="flex flex-column justify-content-center align-items-center h-full w-full">
-      <div style="max-width: 100%;">
+      <div class="max-w-full max-h-full">
         <div class="flex w-full justify-content-start align-items-start pl-2">
           <Button @click="themestore.changeTheme(PrimeVue)" v-if="!themestore.dark" icon="pi pi-sun" plain
             text></Button>
           <Button @click="themestore.changeTheme(PrimeVue)" v-else icon="pi pi-moon" plain text></Button>
         </div>
 
-        <Stepper linear v-model:activeStep="active" class="h-full max-w-full" style="width: 618px">
+        <Stepper linear v-model:activeStep="active" class="h-full max-w-full pb-4" style="width: 618px">
           <StepperPanel header="检查">
-            <template #content>
+            <template #content="{ nextCallback }">
               <Card class="p-3">
+                <template #title>
+                  <h2>环境检查</h2>
+                </template>
+                <template #subtitle>
+                  {{ checkStatus }}
+                </template>
                 <template #content>
                   <div class="flex flex-column gap-4">
-                    <div class="flex justify-content-center">
-                      <Steps class="w-full" :model="allChecks" v-model:activeStep="checkStatus" />
-                    </div>
                     <div class="flex justify-content-center align-items-center">
-                      <ProgressSpinner></ProgressSpinner>
+                      <ProgressSpinner v-if="inCheckProgress"></ProgressSpinner>
+                      <div v-else v-if="checkFailedMessage !== null"
+                        class="flex flex-column align-items-start justify-content-center">
+                        <p class="p-error">{{ checkFailedMessage }}</p>
+                        <Inplace>
+                          <template #display>
+                            <Button class="p-0" label="更多选项" size="small" plain text></Button>
+                          </template>
+                          <template #content>
+                            <Button @click="checkEnvironment" icon="pi pi-sync" label="重新检查" size="small" plain text></Button>
+                            <Inplace class="p-1">
+                              <template #display>
+                                <span class="pi pi-exclamation-triangle text-gray-400 pr-1"></span>
+                                <span class="text-gray-400 text-sm">无视风险</span>
+                              </template>
+                              <template #content>
+                                <div class="flex flex-row gap-3">
+                                  <Checkbox v-model="allChecksOk" :binary="true"></Checkbox> <span
+                                    class="p-error text-sm">我已知悉可能存在的风险，愿意承担可能的一切后果。</span>
+                                </div>
+                              </template>
+                            </Inplace>
+                          </template>
+                        </Inplace>
+                      </div>
                     </div>
+                    <div class="flex justify-content-center">
+                      <Steps class="w-full" :model="allChecks" v-model:activeStep="checkStep" />
+                    </div>
+                  </div>
+                </template>
+                <template #footer>
+                  <div v-if="allChecksOk" class="flex pt-4 justify-content-end">
+                    <Button label="连接" icon="pi pi-arrow-right" iconPos="right" @click="nextCallback"></Button>
                   </div>
                 </template>
               </Card>
@@ -131,7 +213,7 @@ const allChecks = ref([
               <Card class="p-3">
                 <template #title>
                   <div class="flex justify-content-center">
-                    <h1>节点</h1>
+                    <h2>节点</h2>
                   </div>
                 </template>
                 <template #content>
@@ -166,7 +248,7 @@ const allChecks = ref([
               <Card class="p-3">
                 <template #title>
                   <div class="flex justify-content-center">
-                    <h1>登入</h1>
+                    <h2>登入</h2>
                   </div>
                 </template>
                 <template #content>
@@ -216,5 +298,13 @@ const allChecks = ref([
 <style scoped>
 :deep(.p-password-input) {
   width: 100%;
+}
+
+:deep(.p-stepper .p-stepper-nav) {
+  overflow-x: hidden;
+}
+
+:deep(.p-steps .p-steps-item .p-menuitem-link .p-steps-title) {
+  font-size: 0.9rem;
 }
 </style>
