@@ -1,13 +1,16 @@
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 pub mod api {
     pub mod account;
     pub mod session;
+}
+pub mod utils {
+    pub mod checks;
 }
 pub mod exceptions;
 
 use api::account::{account, login};
 use api::session::alive;
 use serde_json::json;
+use utils::checks::{internet, security, system};
 
 #[tauri::command]
 async fn login_handler(server: &str, identity: &str, password: &str) -> Result<String, ()> {
@@ -43,6 +46,21 @@ async fn account_handler(server: &str, sessionkey: &str) -> Result<String, ()> {
     }
 }
 
+#[tauri::command]
+async fn check_internet() -> Result<bool, String> {
+    Ok(internet())
+}
+
+#[tauri::command]
+async fn check_system() -> Result<bool, String> {
+    Ok(system())
+}
+
+#[tauri::command]
+async fn check_security() -> Result<bool, String> {
+    Ok(security())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -51,7 +69,10 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             login_handler,
             session_alive,
-            account_handler
+            account_handler,
+            check_internet,
+            check_system,
+            check_security
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
