@@ -1,22 +1,27 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
 import { useRouter } from "vue-router";
+import { invoke } from "@tauri-apps/api/core";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
+import ProgressSpinner from "primevue/progressspinner";
 
 const router = useRouter();
-const info = ref("");
-const error = ref("");
+const info = ref<string>();
+const error = ref<string>();
 
 const fetchData = async () => {
+    let permissionGranted = await isPermissionGranted();
+    if (!permissionGranted) {
+        await requestPermission();
+    }
+    sendNotification({ title: '月长石', body: "登录中..." });
+
     info.value = "登录中...";
     let callback: { status: boolean; is_alive: boolean; error: string };
 
     if (localStorage.getItem("session_key") != null && localStorage.getItem("server") != null) {
-        let permissionGranted = await isPermissionGranted();
-        if (!permissionGranted) {
-            await requestPermission();
-        }
+
+
         callback = JSON.parse(
             await invoke("session_alive", { server: localStorage.getItem("server"), sessionkey: localStorage.getItem("session_key") })
         );
@@ -24,7 +29,7 @@ const fetchData = async () => {
             if (!callback.is_alive) {
                 info.value = "";
                 error.value = "登录验证失败，请重新登陆！";
-                sendNotification({ title: '月光石', body: error.value });
+                sendNotification({ title: '月长石', body: error.value });
                 localStorage.removeItem("session_key");
                 localStorage.removeItem("isLoggedIn");
                 await new Promise(resolve => setTimeout(resolve, 2000));

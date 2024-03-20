@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-
-// UI 控件
 import SideToolBar from "./Main/SideToolBar.vue"
 import Sessions from "./Main/Sessions.vue"
 import EditorPanel from './Main/EditorPanel.vue';
@@ -81,9 +77,9 @@ function sessionChanged(node: any) {
         </SplitterPanel>
         <SplitterPanel :size="65">
             <Splitter v-if="session" layout="vertical" :pt="{
-                gutter: { style: 'height: 3px; cursor: ns-resize' },
-                gutterHandler: { style: 'display: none' }
-            }">
+        gutter: { style: 'height: 3px; cursor: ns-resize' },
+        gutterHandler: { style: 'display: none' }
+    }">
                 <SplitterPanel class="flex align-items-center justify-content-center" :size="10">
                     <TopBar v-model="session" />
                 </SplitterPanel>
@@ -98,13 +94,7 @@ function sessionChanged(node: any) {
     </Splitter>
 </template>
 
-<style scoped>
-.fixed-width-panel {
-    /* flex: 0 0 3vw; */
-    min-width: 8vw;
-    max-width: 8vw;
-}
-</style>
+<style scoped></style>
 
 
 

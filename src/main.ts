@@ -1,6 +1,8 @@
 import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
+import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import FocusTrap from "primevue/focustrap";
 
 // 视图
 import App from "./App.vue";
@@ -11,7 +13,6 @@ import Login from "./components/Login.vue";
 // 样式表
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
-import FocusTrap from "primevue/focustrap";
 
 localStorage.removeItem("isLoggedIn");
 const routes = [
@@ -47,6 +48,7 @@ router.beforeEach((to, _from, next) => {
 const app = createApp(App);
 app.use(PrimeVue);
 app.use(router);
+app.use(createPinia())
 app.directive("focustrap", FocusTrap)
 
 app.mount("#app");
