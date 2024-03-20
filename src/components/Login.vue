@@ -111,6 +111,7 @@ async function checkEnvironment() {
   checkStatus.value = null
   inCheckProgress.value = true
   checkFailedMessage.value = null
+  allChecksOk.value = null
   checkStatus.value = "检查网络连接中..."
   const internet = await invoke("check_internet")
   if (internet) {
