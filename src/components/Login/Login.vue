@@ -1,6 +1,6 @@
 
 <script setup lang="ts">
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/core";
 import { useField, useForm } from 'vee-validate';
 import { ref } from "vue";
 import { useRouter } from 'vue-router';

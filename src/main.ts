@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
-// import { invoke } from "@tauri-apps/api/tauri";
+// import { invoke } from "@tauri-apps/api/core";
 
 // 视图
 import App from "./App.vue";
@@ -10,10 +10,8 @@ import Login from "./components/Login.vue";
 
 // 样式表
 import "./styles.css";
-import "primevue/resources/primevue.min.css";
 import "primevue/resources/themes/md-dark-indigo/theme.css"
 import "primeflex/primeflex.css";
-import "primeflex/themes/primeone-dark.css";
 import 'primeicons/primeicons.css';
 
 // 控件

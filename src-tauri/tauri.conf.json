@@ -2,60 +2,45 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Moonstone",
-    "version": "0.1.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "windows": {
+      "allowDowngrades": true,
+      "certificateThumbprint": null,
+      "digestAlgorithm": null,
+      "nsis": {
+        "installerIcon": "icons/icon.ico"
       },
-      "notification": {
-        "all": true
+      "timestampUrl": null,
+      "tsp": false,
+      "webviewFixedRuntimePath": null,
+      "webviewInstallMode": {
+        "silent": true,
+        "type": "downloadBootstrapper"
+      },
+      "wix": {
+        "language": "zh-CN"
       }
     },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "org.noctisynth.moonstone",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "copyright": "Copyright (c) 2011-PRESENT Noctisynth, org.",
-      "windows": {
-        "allowDowngrades": true,
-        "certificateThumbprint": null,
-        "digestAlgorithm": null,
-        "nsis": {
-          "license": "../LICENSE",
-          "installerIcon": "icons/icon.ico"
-        },
-        "timestampUrl": null,
-        "tsp": false,
-        "webviewFixedRuntimePath": null,
-        "webviewInstallMode": {
-          "silent": true,
-          "type": "downloadBootstrapper"
-        },
-        "wix": {
-          "language": "zh-CN",
-          "license": "../LICENSE"
-        }
-      }
-    },
-    "security": {
-      "csp": null
-    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "copyright": "Copyright (c) 2011-PRESENT Noctisynth, org.",
+    "licenseFile": "../LICENSE"
+  },
+  "productName": "Moonstone",
+  "version": "0.1.0",
+  "identifier": "org.noctisynth.moonstone",
+  "plugins": {},
+  "app": {
     "windows": [
       {
         "fullscreen": false,
@@ -64,6 +49,9 @@
         "width": 1000,
         "height": 700
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }
