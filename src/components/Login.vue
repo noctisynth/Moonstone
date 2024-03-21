@@ -18,11 +18,22 @@ import { useThemeStore } from "../stores/theme";
 import { usePrimeVue } from "primevue/config";
 import Steps from "primevue/steps";
 import ProgressSpinner from "primevue/progressspinner";
+import { useDebugStore } from "../stores/debug";
+import { useLoginStore } from "../stores/login";
 
 const router = useRouter();
+const debugstore = useDebugStore()
+const loginstore = useLoginStore()
+
+const { handleSubmit: handleCheck, resetForm: _resetCheckForm } = useForm();
+const { value: node, errorMessage: invalidNode } = useField('node', validateNode);
+const { value: licenseAccept, errorMessage: invalidLicenseAccept } = useField('username', validateLicenseAccept);
+
+if (loginstore.node) {
+  node.value = loginstore.node
+}
 
 const { handleSubmit, resetForm: _resetForm } = useForm();
-const { value: server, errorMessage: invalidServer } = useField('server', validateServer);
 const { value: identity, errorMessage: invalidUsername } = useField('username', validateUsername);
 const { value: password, errorMessage: invalidPassword } = useField('password', validatePassword);
 const { value: accept, errorMessage: invalidAccept } = useField('accept', validateAccept);
@@ -30,7 +41,16 @@ const { value: accept, errorMessage: invalidAccept } = useField('accept', valida
 const info = ref<string>();
 const error = ref<string>();
 
-function validateServer(value: string) {
+function validateLicenseAccept(value: string) {
+  if (!value) {
+    return "请先同意月长石使用协议！";
+  }
+
+  return true;
+}
+
+
+function validateNode(value: string) {
   if (!value) {
     return "请输入服务端地址！";
   }
@@ -64,18 +84,16 @@ function validateAccept(value: boolean) {
 }
 
 const login = handleSubmit(async () => {
+  if (debugstore.debug) {
+    router.push("/dashboard")
+  }
   info.value = "登录中...";
 
-  if (!accept.value) {
-    invalidAccept.value = "请先阅读并同意浊莲文明协定！";
-    return
-  }
-
   let callback: { status: boolean; session_key: string; error: string } = JSON.parse(
-    await invoke("login_handler", { server: server.value, identity: identity.value, password: password.value })
+    await invoke("login_handler", { server: node.value, identity: identity.value, password: password.value })
   );
   if (callback["status"]) {
-    localStorage.setItem("server", server.value);
+    localStorage.setItem("server", node.value);
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("session_key", callback["session_key"]);
     info.value = "登录成功";
@@ -92,6 +110,7 @@ const active = ref(0)
 const checkStep = ref(0)
 const checkStatus = ref<string | null>()
 const inCheckProgress = ref<boolean>(true)
+const inProgress = ref<boolean>(false)
 const allChecksOk = ref<boolean>(false)
 const checkFailedMessage = ref<string | null>()
 const allChecks = ref([
@@ -106,12 +125,25 @@ const allChecks = ref([
   },
 ])
 
+const checkNode = handleCheck(() => {
+  inProgress.value = true;
+  loginstore.checkNode(node.value, true)
+  active.value = 2
+  inProgress.value = false
+})
+
 async function checkEnvironment() {
+  if (debugstore.debug) {
+    inCheckProgress.value = false
+    allChecksOk.value = true
+    checkFailedMessage.value = "您当前处于开发者模式！"
+    return
+  }
   checkStep.value = 0
   checkStatus.value = null
   inCheckProgress.value = true
   checkFailedMessage.value = null
-  allChecksOk.value = null
+  allChecksOk.value = false
   checkStatus.value = "检查网络连接中..."
   const internet = await invoke("check_internet")
   if (internet) {
@@ -179,7 +211,8 @@ onMounted(async () => {
                             <Button class="p-0" label="更多选项" size="small" plain text></Button>
                           </template>
                           <template #content>
-                            <Button @click="checkEnvironment" icon="pi pi-sync" label="重新检查" size="small" plain text></Button>
+                            <Button @click="checkEnvironment" icon="pi pi-sync" label="重新检查" size="small" plain
+                              text></Button>
                             <Inplace class="p-1">
                               <template #display>
                                 <span class="pi pi-exclamation-triangle text-gray-400 pr-1"></span>
@@ -210,7 +243,7 @@ onMounted(async () => {
             </template>
           </StepperPanel>
           <StepperPanel header="节点">
-            <template #content="{ nextCallback }">
+            <template #content>
               <Card class="p-3">
                 <template #title>
                   <div class="flex justify-content-center">
@@ -219,24 +252,26 @@ onMounted(async () => {
                 </template>
                 <template #content>
                   <div class="flex flex-column justify-content-center gap-2">
-                    <form @submit="login" class="flex flex-column gap-3">
+                    <form @submit="checkNode" class="flex flex-column gap-3">
                       <IconField>
                         <InputIcon class="pi pi-globe"></InputIcon>
-                        <InputText id="server-input" v-model="server" class="w-full" placeholder="节点地址" />
+                        <InputText id="node-input" v-model="node" class="w-full" placeholder="节点地址" :disabled="inProgress"/>
                       </IconField>
-                      <small v-if="invalidServer" class="p-error" id="username-error">{{ invalidServer
+                      <small v-if="invalidNode" class="p-error" id="node-error">{{ invalidNode
                         }}</small>
                       <div class="field-checkbox">
-                        <Checkbox v-model="accept" :binary="true" name="accept" inputId="accept-input"
-                          :class="{ 'p-invalid': invalidAccept }" aria-describedby="accept-error" />
-                        <label for="accept-input">我已阅读并同意月长石使用协议</label>
+                        <Checkbox v-model="licenseAccept" :binary="true" inputId="license-accept-input"
+                          aria-describedby="license-accept-error" :disabled="inProgress"/>
+                        <label for="license-accept-input">我已阅读并同意月长石使用协议</label>
                       </div>
-                      <small v-if="invalidAccept" class="p-error" id="accept-error">{{ invalidAccept
-                        }}</small>
+                      <small v-if="invalidLicenseAccept" class="p-error" id="license-accept-error">{{
+            invalidLicenseAccept
+          }}</small>
                       <small v-if="info" class="p-info" id="text-info">{{ info }}</small>
                       <small v-if="error" class="p-error" id="text-error">{{ error }}</small>
                       <div class="flex pt-4 justify-content-end">
-                        <Button label="登入" icon="pi pi-arrow-right" iconPos="right" @click="nextCallback"></Button>
+                        <Button type="submit" label="登入"
+                          :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-right')" iconPos="right"></Button>
                       </div>
                     </form>
                   </div>
@@ -257,10 +292,8 @@ onMounted(async () => {
                     <form @submit="login" class="flex flex-column gap-3">
                       <IconField>
                         <InputIcon class="pi pi-globe"></InputIcon>
-                        <InputText id="server-input" v-model="server" class="w-full" placeholder="节点地址" />
+                        <InputText v-model="loginstore.node" class="w-full" placeholder="节点地址" disabled />
                       </IconField>
-                      <small v-if="invalidServer" class="p-error" id="username-error">{{ invalidServer
-                        }}</small>
                       <IconField>
                         <InputIcon class="pi pi-user"></InputIcon>
                         <InputText id="username-input" v-model="identity" class="w-full" placeholder="用户名或邮箱" />
