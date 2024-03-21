@@ -4,6 +4,8 @@ import Sessions from "./Main/Sessions.vue"
 import EditorPanel from './Main/EditorPanel.vue';
 import TopBar from "./Main/TopBar.vue";
 import Messages from "./Main/Messages.vue";
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
 
 import { ref } from 'vue';
 
@@ -95,37 +97,3 @@ function sessionChanged(node: any) {
 </template>
 
 <style scoped></style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <script setup lang="ts">
-import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/tauri";
-
-const greetMsg = ref("");
-const name = ref("");
-
-async function greet2() {
-  // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-  greetMsg.value = await invoke("greet2", { name: name.value });
-}
-</script>
-
-<template>
-  <form class="row" @submit.prevent="greet2">
-    <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-    <button type="submit">Greet</button>
-  </form>
-
-  <p>{{ greetMsg }}</p>
-</template> -->

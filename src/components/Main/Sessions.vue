@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Tree from 'primevue/tree';
 import { ref } from 'vue';
 
 const emit = defineEmits(['sessionChanged'])

@@ -59,6 +59,7 @@ onMounted(() => {
         height: '100%',
         mode: 'ir',
         icon: 'material',
+        cdn: '',
         cache: {
             enable: false,
         },

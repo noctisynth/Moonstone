@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import Button from 'primevue/button';
+import Toolbar from 'primevue/toolbar';
+
 const session: any = defineModel()
 </script>
 

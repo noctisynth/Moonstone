@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import MarkdownIt from 'markdown-it';
+import Badge from "primevue/badge";
+import Listbox from "primevue/listbox";
 
 const md = new MarkdownIt();
 const selectedMessage = ref();
