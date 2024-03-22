@@ -1,3 +1,5 @@
+use oblivion::api::get;
+use oblivion::exceptions::OblivionException;
 use std::net::TcpStream;
 
 pub(crate) fn internet() -> bool {
@@ -15,5 +17,12 @@ pub(crate) fn security() -> bool {
     match TcpStream::connect("google.com:443") {
         Ok(_) => true,
         Err(_) => false,
+    }
+}
+
+pub(crate) async fn node_status(node: &str) -> Result<(), OblivionException> {
+    match get(node, true).await {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e),
     }
 }

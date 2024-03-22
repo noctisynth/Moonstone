@@ -10,7 +10,7 @@ pub mod exceptions;
 use api::account::{account, login};
 use api::session::alive;
 use serde_json::json;
-use utils::checks::{internet, security, system};
+use utils::checks::{internet, node_status, security, system};
 
 #[tauri::command]
 async fn login_handler(server: &str, identity: &str, password: &str) -> Result<String, ()> {
@@ -61,6 +61,14 @@ async fn check_security() -> Result<bool, String> {
     Ok(security())
 }
 
+#[tauri::command]
+async fn check_node(node: String) -> Result<String, ()> {
+    match node_status(&node).await {
+        Ok(_) => Ok(json!({"status": true, "error": json!("null")}).to_string()),
+        Err(error) => Ok(json!({"status": false, "error": error.to_string()}).to_string()),
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -72,7 +80,8 @@ pub fn run() {
             account_handler,
             check_internet,
             check_system,
-            check_security
+            check_security,
+            check_node
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
