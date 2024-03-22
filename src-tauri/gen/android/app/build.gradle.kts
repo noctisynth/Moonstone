@@ -17,7 +17,7 @@ android.applicationVariants.all {
     val variant = this
     outputs.all {
         if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
-            this.outputFileName = "Moonstone_0.${variant.versionName}_android_arrch64_unstable.APK"
+            this.outputFileName = "Moonstone_${variant.versionName}_android_arrch64_unstable.APK"
         }
     }
 }
