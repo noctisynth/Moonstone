@@ -52,5 +52,10 @@ export const useLoginStore = defineStore("login", {
         };
       }
     },
+    logout() {
+      this.isLoggedIn = false;
+      this.session_key = null;
+      localStorage.removeItem("session_key");
+    },
   },
 });

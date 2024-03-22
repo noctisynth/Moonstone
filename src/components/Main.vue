@@ -13,6 +13,11 @@ import { ref } from 'vue';
 import { useThemeStore } from '../stores/theme';
 import { usePrimeVue } from 'primevue/config';
 import { useToast } from 'primevue/usetoast';
+import { useLoginStore } from '../stores/login';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+const loginstore = useLoginStore()
 
 const items = ref([
     {
@@ -64,6 +69,9 @@ const toast = useToast()
                                     <div><span>风格</span></div>
                                     <InputSwitch v-model="themestore.dark" @click="themestore.changeTheme(PrimeVue)">
                                     </InputSwitch>
+                                </div>
+                                <div class="mt-6 flex justify-content-end">
+                                    <Button @click="loginstore.logout(); router.push('/')" icon="pi pi-sign-out" label="退出登录" size="small"></Button>
                                 </div>
                             </div>
                         </div>
