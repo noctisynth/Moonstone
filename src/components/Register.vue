@@ -38,8 +38,8 @@ const { value: identity, errorMessage: invalidUsername } = useField('username', 
 const { value: password, errorMessage: invalidPassword } = useField('password', validatePassword);
 const { value: accept, errorMessage: invalidAccept } = useField('accept', validateAccept);
 
-const info = ref<string | null>();
-const error = ref<string | null>();
+const info = ref<string>();
+const error = ref<string>();
 
 function validateLicenseAccept(value: string) {
   if (!value) {
@@ -88,16 +88,19 @@ const login = handleSubmit(async () => {
     router.push("/dashboard")
   }
   info.value = "登录中...";
-  inProgress.value = true
-  const res = await loginstore.login(identity.value, password.value)
-  inProgress.value = false
-  if (res.status) {
-    info.value = res.msg
-    error.value = null
-    router.push("/")
+
+  let callback: { status: boolean; session_key: string; error: string } = JSON.parse(
+    await invoke("login_handler", { server: node.value, identity: identity.value, password: password.value })
+  );
+  if (callback["status"]) {
+    localStorage.setItem("server", node.value);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("session_key", callback["session_key"]);
+    info.value = "登录成功";
+    router.push('/');
   } else {
-    info.value = null
-    error.value = res.msg
+    info.value = "";
+    error.value = callback["error"];
   }
 })
 
@@ -128,8 +131,6 @@ const checkNode = handleCheck(async () => {
   inProgress.value = false
   if (res.status) {
     active.value = 2
-    info.value = null
-    error.value = null
   } else {
     error.value = "节点存在异常: " + res.error + "，请检查你的节点地址是否正确，或者节点可能遭到了网络攻击。"
   }
@@ -319,8 +320,7 @@ onMounted(async () => {
                       <small v-if="error" class="p-error" id="text-error">{{ error }}</small>
                       <div class="flex pt-4 justify-content-between">
                         <Button label="返回" icon="pi pi-arrow-left" severity="secondary" @click="prevCallback"></Button>
-                        <Button label="认证" :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-right')"
-                          type="submit" iconPos="right"></Button>
+                        <Button label="认证" icon="pi pi-arrow-right" type="submit" iconPos="right"></Button>
                       </div>
                     </form>
                   </div>

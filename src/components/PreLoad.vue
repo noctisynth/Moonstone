@@ -5,9 +5,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
 import ProgressSpinner from "primevue/progressspinner";
 import { useDebugStore } from "../stores/debug";
+import { useLoginStore } from "../stores/login";
 
 const router = useRouter();
 const debugstore = useDebugStore()
+const loginstore = useLoginStore()
 
 const info = ref<string | null>();
 const error = ref<string>();
@@ -23,29 +25,30 @@ const fetchData = async () => {
 
     let callback: { status: boolean; is_alive: boolean; error: string };
 
-    if (localStorage.getItem("session_key") != null && localStorage.getItem("server") != null) {
+    if (loginstore.session_key != null && loginstore.node != null) {
         info.value = "登录中...";
         sendNotification({ title: '月长石', body: "登录中..." });
         callback = JSON.parse(
-            await invoke("session_alive", { server: localStorage.getItem("server"), sessionkey: localStorage.getItem("session_key") })
+            await invoke("session_alive", { server: loginstore.node, sessionkey: loginstore.session_key })
         );
         if (callback.status) {
             if (!callback.is_alive) {
                 info.value = null;
                 error.value = "登录验证失败，请重新登陆！";
                 sendNotification({ title: '月长石', body: error.value });
-                localStorage.removeItem("session_key");
-                localStorage.removeItem("isLoggedIn");
+                loginstore.session_key = null
+                loginstore.isLoggedIn = false
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 return false;
             } else {
                 info.value = "登录验证成功！";
+                loginstore.isLoggedIn = true
                 sendNotification({ title: '月光石', body: info.value });
                 return true;
             }
         } else {
-            info.value = "";
-            error.value = callback["error"];
+            info.value = null;
+            error.value = callback.error;
             sendNotification({ title: '月光石', body: error.value });
             await new Promise(resolve => setTimeout(resolve, 2000));
             return false;
@@ -57,10 +60,8 @@ const fetchData = async () => {
 
 fetchData().then((sessionAlive) => {
     if (!sessionAlive) {
-        localStorage.removeItem("isLoggedIn");
         router.push({ path: "/login" });
     } else {
-        localStorage.setItem("isLoggedIn", "true");
         router.push({ path: "/dashboard" });
     }
 });
