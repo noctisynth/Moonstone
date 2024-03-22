@@ -1,72 +1,72 @@
 <script setup lang="ts">
-import SideToolBar from "./Main/SideToolBar.vue"
-import Sessions from "./Main/Sessions.vue"
-import EditorPanel from './Main/EditorPanel.vue';
-import TopBar from "./Main/TopBar.vue";
-import Messages from "./Main/Messages.vue";
-import Splitter from "primevue/splitter";
-import SplitterPanel from "primevue/splitterpanel";
+// import SideToolBar from "./Main/SideToolBar.vue"
+// import Sessions from "./Main/Sessions.vue"
+// import EditorPanel from './Main/EditorPanel.vue';
+// import TopBar from "./Main/TopBar.vue";
+// import Messages from "./Main/Messages.vue";
+// import Splitter from "primevue/splitter";
+// import SplitterPanel from "primevue/splitterpanel";
 
-import { ref } from 'vue';
+// import { ref } from 'vue';
 
-let session = ref()
-let messages = ref([
-    {
-        user: {
-            nickname: '雪花'
-        },
-        sequence: '',
-        timestamp: '2024/2/6 19:54',
-        items: [
-            {
-                text: '我要跑路',
-                status: 'verified',
-                timestamp: '2024/2/6 19:54',
-            },
-            {
-                text: '跑路跑路',
-                status: 'verified',
-                timestamp: '2024/2/6 19:54',
-            },
-        ]
-    },
-    {
-        user: {
-            nickname: '苏向夜'
-        },
-        sequence: '',
-        items: [
-            {
-                text: '不许跑',
-                status: 'sending',
-                timestamp: '2024/2/6 19:54',
-            },
-            {
-                text: '#敲',
-                status: 'failed',
-                timestamp: '2024/2/6 19:54',
-            },
-            {
-                text: '#捉',
-                status: 'reached',
-                timestamp: '2024/2/6 19:54',
-            },
-            {
-                text: '谴责！',
-                status: 'check',
-                timestamp: '2024/2/6 19:54',
-            },
-        ]
-    },
-]);
+// let session = ref()
+// let messages = ref([
+//     {
+//         user: {
+//             nickname: '雪花'
+//         },
+//         sequence: '',
+//         timestamp: '2024/2/6 19:54',
+//         items: [
+//             {
+//                 text: '我要跑路',
+//                 status: 'verified',
+//                 timestamp: '2024/2/6 19:54',
+//             },
+//             {
+//                 text: '跑路跑路',
+//                 status: 'verified',
+//                 timestamp: '2024/2/6 19:54',
+//             },
+//         ]
+//     },
+//     {
+//         user: {
+//             nickname: '苏向夜'
+//         },
+//         sequence: '',
+//         items: [
+//             {
+//                 text: '不许跑',
+//                 status: 'sending',
+//                 timestamp: '2024/2/6 19:54',
+//             },
+//             {
+//                 text: '#敲',
+//                 status: 'failed',
+//                 timestamp: '2024/2/6 19:54',
+//             },
+//             {
+//                 text: '#捉',
+//                 status: 'reached',
+//                 timestamp: '2024/2/6 19:54',
+//             },
+//             {
+//                 text: '谴责！',
+//                 status: 'check',
+//                 timestamp: '2024/2/6 19:54',
+//             },
+//         ]
+//     },
+// ]);
 
-function sessionChanged(node: any) {
-    session.value = node;
-}
+// function sessionChanged(node: any) {
+//     session.value = node;
+// }
 </script>
 
 <template>
-    <Splitter class="h-full" style="border: none;" :pt="{
+    <!-- <Splitter class="h-full" style="border: none;" :pt="{
         gutter: { style: 'width: 3px; cursor: ew-resize' },
         gutterHandler: { style: 'display: none' }
     }">
@@ -93,7 +93,7 @@ function sessionChanged(node: any) {
                 </SplitterPanel>
             </Splitter>
         </SplitterPanel>
-    </Splitter>
+    </Splitter> -->
 </template>
 
 <style scoped></style>

@@ -125,11 +125,15 @@ const allChecks = ref([
   },
 ])
 
-const checkNode = handleCheck(() => {
+const checkNode = handleCheck(async () => {
   inProgress.value = true;
-  loginstore.checkNode(node.value, true)
-  active.value = 2
+  const res = await loginstore.checkNode(node.value, true)
   inProgress.value = false
+  if (res.status) {
+    active.value = 2
+  } else {
+    error.value = "节点存在异常: " + res.error + "，请检查你的节点地址是否正确，或者节点可能遭到了网络攻击。"
+  }
 })
 
 async function checkEnvironment() {
@@ -255,13 +259,14 @@ onMounted(async () => {
                     <form @submit="checkNode" class="flex flex-column gap-3">
                       <IconField>
                         <InputIcon class="pi pi-globe"></InputIcon>
-                        <InputText id="node-input" v-model="node" class="w-full" placeholder="节点地址" :disabled="inProgress"/>
+                        <InputText id="node-input" v-model="node" class="w-full" placeholder="节点地址"
+                          :disabled="inProgress" />
                       </IconField>
                       <small v-if="invalidNode" class="p-error" id="node-error">{{ invalidNode
                         }}</small>
                       <div class="field-checkbox">
                         <Checkbox v-model="licenseAccept" :binary="true" inputId="license-accept-input"
-                          aria-describedby="license-accept-error" :disabled="inProgress"/>
+                          aria-describedby="license-accept-error" :disabled="inProgress" />
                         <label for="license-accept-input">我已阅读并同意月长石使用协议</label>
                       </div>
                       <small v-if="invalidLicenseAccept" class="p-error" id="license-accept-error">{{
