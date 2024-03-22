@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import FocusTrap from "primevue/focustrap";
+import ToastService from 'primevue/toastservice';
 
 // 视图
 import App from "./App.vue";
@@ -50,5 +51,6 @@ app.use(PrimeVue);
 app.use(router);
 app.use(createPinia())
 app.directive("focustrap", FocusTrap)
+app.use(ToastService);
 
 app.mount("#app");
