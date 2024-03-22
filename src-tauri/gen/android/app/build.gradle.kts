@@ -11,6 +11,17 @@ val keyPropertiesFile = rootProject.file("key.properties")
 val keyProperties = Properties()
 keyProperties.load(FileInputStream(keyPropertiesFile))
 
+android.applicationVariants.all {
+    val buildType = this.buildType.name
+    val flavorName = this.flavorName
+    val variant = this
+    outputs.all {
+        if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
+            this.outputFileName = "Moonstone_0.${variant.versionName}_android_arrch64_unstable.APK"
+        }
+    }
+}
+
 android {
     compileSdk = 33
     namespace = "org.noctisynth.moonstone"
@@ -20,7 +31,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.2.0-alpha.3"
     }
     signingConfigs {
         create("release") {
