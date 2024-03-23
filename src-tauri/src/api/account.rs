@@ -79,3 +79,44 @@ pub async fn account(server: &str, session_key: &str) -> Result<Value, Exception
         }),
     }
 }
+
+pub(crate) async fn register(
+    node: &str,
+    tuta_mail: &str,
+    username: &str,
+    nickname: &str,
+    password: &str,
+) -> Result<Value, Exception> {
+    let mut res = match api::post(
+        format!("{node}/account/new").as_str(),
+        json!({"tuta_mail": tuta_mail, "username": username, "nickname": nickname, "password": password}),
+        true,
+    )
+    .await
+    {
+        Ok(res) => res,
+        Err(error) => {
+            return Err(Exception::ConnectionError { error: error });
+        }
+    };
+
+    match res.json() {
+        Ok(json) => {
+            let status = if json["status"].as_bool().is_none() {
+                false
+            } else {
+                json["status"].as_bool().unwrap()
+            };
+            if status {
+                Ok(json)
+            } else {
+                Err(Exception::RequestFailed {
+                    detail: json["msg"].as_str().unwrap().to_string(),
+                })
+            }
+        }
+        Err(error) => Err(Exception::BadResponse {
+            detail: error.to_string(),
+        }),
+    }
+}

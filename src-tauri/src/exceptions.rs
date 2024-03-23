@@ -11,4 +11,6 @@ pub enum Exception {
         "捕获到了不符合预期格式的数据: {detail},  这可能是由于您遭到了网络劫持, 必要时建议紧急避难"
     )]
     BadResponse { detail: String },
+    #[error("请求失败: {detail}")]
+    RequestFailed { detail: String },
 }
