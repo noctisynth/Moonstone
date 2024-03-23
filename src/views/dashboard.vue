@@ -44,7 +44,7 @@ const toast = useToast()
 
 <template>
     <div class="w-full h-full">
-        <Toast></Toast>
+        <Toast style="max-width: 90%;"></Toast>
         <div class="flex flex-row h-full">
             <div
                 class="flex flex-column justify-content-between align-items-center p-3 bg-surface-300 border-right-2 border-200">
