@@ -1,14 +1,14 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import PreLoad from "../components/PreLoad.vue";
-import Login from "../components/Login.vue";
-import Main from "../components/Main.vue";
-import Register from "../components/Register.vue";
+import Login from "../views/login.vue";
+import Dashboard from "../views/dashboard.vue";
+import Register from "../views/register.vue";
 import { useLoginStore } from "../stores/login";
 
 const routes = [
   { path: "/", component: PreLoad },
   { path: "/login", component: Login },
-  { path: "/dashboard", component: Main },
+  { path: "/dashboard", component: Dashboard },
   { path: "/register", component: Register },
 ];
 const router = createRouter({

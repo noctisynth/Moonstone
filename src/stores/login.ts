@@ -57,5 +57,26 @@ export const useLoginStore = defineStore("login", {
       this.session_key = null;
       localStorage.removeItem("session_key");
     },
+    async register(
+      tuta_mail: string,
+      username: string,
+      nickname: string,
+      password: string
+    ) {
+      let res: { status: boolean; error: string } = JSON.parse(
+        await invoke("register_handler", {
+          node: this.node,
+          tutaMail: tuta_mail,
+          username: username,
+          nickname: nickname,
+          password: password,
+        })
+      );
+      if (res.status) {
+        return { status: true, msg: "注册成功！" };
+      } else {
+        return { status: false, msg: "注册失败: " + res.error };
+      }
+    },
   },
 });

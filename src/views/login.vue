@@ -263,7 +263,8 @@ onMounted(async () => {
                           <InputText id="node-input" v-model="node" class="w-full" placeholder="节点地址"
                             :disabled="inProgress || nodeCheckOk" />
                         </IconField>
-                        <Button v-if="nodeCheckOk" @click="() => { nodeCheckOk = false; node = ''}" icon="pi pi-refresh" plain text></Button>
+                        <Button v-if="nodeCheckOk" @click="nodeCheckOk = false; node = ''" icon="pi pi-refresh" plain
+                          text></Button>
                       </div>
                       <small v-if="invalidNode" class="p-error" id="node-error">{{ invalidNode
                         }}</small>
