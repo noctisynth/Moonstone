@@ -9,6 +9,8 @@ import Card from 'primevue/card';
 import Stepper from 'primevue/stepper';
 import StepperPanel from 'primevue/stepperpanel';
 import Inplace from 'primevue/inplace';
+import Steps from "primevue/steps";
+import ProgressSpinner from "primevue/progressspinner";
 
 import { invoke } from "@tauri-apps/api/core";
 import { useField, useForm } from 'vee-validate';
@@ -16,8 +18,6 @@ import { onMounted, ref } from "vue";
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "../stores/theme";
 import { usePrimeVue } from "primevue/config";
-import Steps from "primevue/steps";
-import ProgressSpinner from "primevue/progressspinner";
 import { useDebugStore } from "../stores/debug";
 import { useLoginStore } from "../stores/login";
 
@@ -110,6 +110,7 @@ const inCheckProgress = ref<boolean>(true)
 const inProgress = ref<boolean>(false)
 const allChecksOk = ref<boolean>(false)
 const checkFailedMessage = ref<string | null>()
+const nodeCheckOk = ref<boolean>(false)
 const allChecks = ref([
   {
     label: '网络连接'
@@ -127,9 +128,9 @@ const checkNode = handleCheck(async () => {
   const res = await loginstore.checkNode(node.value, true)
   inProgress.value = false
   if (res.status) {
-    active.value = 2
     info.value = null
     error.value = null
+    nodeCheckOk.value = true
   } else {
     error.value = "节点存在异常: " + res.error + "，请检查你的节点地址是否正确，或者节点可能遭到了网络攻击。"
   }
@@ -256,16 +257,19 @@ onMounted(async () => {
                 <template #content>
                   <div class="flex flex-column justify-content-center gap-2">
                     <form @submit="checkNode" class="flex flex-column gap-3">
-                      <IconField>
-                        <InputIcon class="pi pi-globe"></InputIcon>
-                        <InputText id="node-input" v-model="node" class="w-full" placeholder="节点地址"
-                          :disabled="inProgress" />
-                      </IconField>
+                      <div class="inline-flex w-full gap-2">
+                        <IconField class="w-full">
+                          <InputIcon class="pi pi-globe"></InputIcon>
+                          <InputText id="node-input" v-model="node" class="w-full" placeholder="节点地址"
+                            :disabled="inProgress || nodeCheckOk" />
+                        </IconField>
+                        <Button v-if="nodeCheckOk" @click="() => { nodeCheckOk = false; node = ''}" icon="pi pi-refresh" plain text></Button>
+                      </div>
                       <small v-if="invalidNode" class="p-error" id="node-error">{{ invalidNode
                         }}</small>
                       <div class="field-checkbox">
                         <Checkbox v-model="licenseAccept" :binary="true" inputId="license-accept-input"
-                          aria-describedby="license-accept-error" :disabled="inProgress" />
+                          aria-describedby="license-accept-error" :disabled="inProgress || nodeCheckOk" />
                         <label for="license-accept-input">我已阅读并同意月长石使用协议</label>
                       </div>
                       <small v-if="invalidLicenseAccept" class="p-error" id="license-accept-error">{{
@@ -273,9 +277,13 @@ onMounted(async () => {
           }}</small>
                       <small v-if="info" class="p-info" id="text-info">{{ info }}</small>
                       <small v-if="error" class="p-error" id="text-error">{{ error }}</small>
-                      <div class="flex pt-4 justify-content-end">
-                        <Button type="submit" label="登入"
-                          :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-right')" iconPos="right"></Button>
+                      <div v-if="nodeCheckOk" class="flex pt-4 justify-content-between">
+                        <Button @click="router.push('/register')" icon="pi pi-plus-circle" label="注册"></Button>
+                        <Button @click="active = 2" label="登入" icon="pi pi-sign-in" iconPos="right"></Button>
+                      </div>
+                      <div v-else class="flex pt-4 justify-content-end">
+                        <Button type="submit" label="检查"
+                          :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-caret-right')" iconPos="right"></Button>
                       </div>
                     </form>
                   </div>
