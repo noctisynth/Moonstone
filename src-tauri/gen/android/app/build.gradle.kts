@@ -24,10 +24,10 @@ android.applicationVariants.all {
 
 android {
     compileSdk = 33
-    namespace = "org.noctisynth.mst"
+    namespace = "org.noctisynth.moonstone"
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "org.noctisynth.mst"
+        applicationId = "org.noctisynth.moonstone"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
