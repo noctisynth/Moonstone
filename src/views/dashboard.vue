@@ -4,22 +4,20 @@ import Button from 'primevue/button';
 import Avatar from 'primevue/avatar';
 import Divider from 'primevue/divider';
 import Dialog from 'primevue/dialog';
-import InputSwitch from 'primevue/inputswitch';
 import InputText from 'primevue/inputtext';
 import Toast from 'primevue/toast';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
+import Menu from 'primevue/menu';
+
+import Settings from '../components/Settings.vue';
+
 import { ref } from 'vue';
-import { useThemeStore } from '../stores/theme';
-import { usePrimeVue } from 'primevue/config';
 import { useToast } from 'primevue/usetoast';
-import { useLoginStore } from '../stores/login';
-import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const loginstore = useLoginStore()
-
-const items = ref([
+const sessions = ref([
     {
         label: '信道',
         icon: 'pi pi-inbox',
@@ -37,9 +35,41 @@ const items = ref([
 ])
 
 const showDialog = ref<boolean>(false)
-const themestore = useThemeStore()
-const PrimeVue = usePrimeVue()
 const toast = useToast()
+
+const selectedSession = ref()
+const menu = ref();
+
+const toggle = (event: any) => {
+    menu.value.toggle(event);
+}
+
+const items = ref([
+    {
+        label: '信道',
+        items: [
+            {
+                label: '连接信道',
+                icon: 'pi pi-plus',
+                command: () => {
+                    toast.add({ 'severity': 'warn', 'summary': '中止', 'detail': '弦月测试期间不开放信道测试接口。' })
+                }
+            },
+        ]
+    },
+    {
+        label: '通讯',
+        items: [
+            {
+                label: '添加群组',
+                icon: 'pi pi-user-plus',
+                command: () => {
+                    toast.add({ 'severity': 'warn', 'summary': '中止', 'detail': '请等待开放。' })
+                }
+            }
+        ]
+    }
+]);
 </script>
 
 <template>
@@ -63,33 +93,34 @@ const toast = useToast()
                                 <span class="font-bold white-space-nowrap">设置</span>
                             </div>
                         </template>
-                        <div class="flex flex-column justify-content-center align-items-center">
-                            <div class="flex flex-column w-full p-2">
-                                <div class="inline-flex justify-content-between">
-                                    <div><span>风格</span></div>
-                                    <InputSwitch v-model="themestore.dark" @click="themestore.changeTheme(PrimeVue)">
-                                    </InputSwitch>
-                                </div>
-                                <div class="mt-6 flex justify-content-end">
-                                    <Button @click="loginstore.logout(); router.push('/')" icon="pi pi-sign-out" label="退出登录" size="small"></Button>
-                                </div>
-                            </div>
-                        </div>
+                        <Settings></Settings>
                     </Dialog>
                 </div>
             </div>
-            <div class="w-full p-2">
-                <div class="w-full h-full flex flex-column gap-3 p-1">
-                    <div class="inline-flex justify-content-between gap-3 max-w-full">
-                        <IconField iconPosition="left">
-                            <InputIcon class="pi pi-search"></InputIcon>
-                            <InputText placeholder="搜索" class="w-full"></InputText>
-                        </IconField>
-                        <Button icon="pi pi-plus" size="small" outlined></Button>
-                    </div>
-                    <Divider class="m-0"></Divider>
-                    <PanelMenu :model="items" multiple class="w-full"></PanelMenu>
-                </div>
+            <div class="w-full">
+                <Splitter class="w-full h-full border-none">
+                    <SplitterPanel :size="26" style="min-width: 12rem;">
+                        <div class="w-full h-full flex flex-column gap-3 p-2">
+                            <div class="inline-flex justify-content-between gap-2 max-w-full">
+                                <IconField iconPosition="left">
+                                    <InputIcon class="pi pi-search"></InputIcon>
+                                    <InputText placeholder="搜索" class="w-full"></InputText>
+                                </IconField>
+                                <Button type="button" @click="toggle" icon="pi pi-plus" size="small"
+                                    aria-haspopup="true" aria-controls="overlay_menu" outlined></Button>
+                                <Menu ref="menu" id="overlay_menu" :model="items" :popup="true"></Menu>
+                            </div>
+                            <Divider class="m-0"></Divider>
+                            <PanelMenu :model="sessions" multiple class="w-full"></PanelMenu>
+                        </div>
+                    </SplitterPanel>
+                    <SplitterPanel :size="74" class="element">
+                        <div v-if="!selectedSession"
+                            class="w-full h-full flex flex-column justify-content-center align-items-center">
+                            <img src="/icon.png" width="300"></img>
+                        </div>
+                    </SplitterPanel>
+                </Splitter>
             </div>
         </div>
     </div>
@@ -98,5 +129,19 @@ const toast = useToast()
 <style scoped>
 :deep(.p-divider.p-divider-horizontal:before) {
     border-top-width: 2px;
+}
+
+:deep(.p-splitter .p-splitter-gutter) {
+    width: 2px;
+}
+
+@media (max-width: 600px) {
+    .element {
+        display: none;
+    }
+
+    :deep(.p-splitter-gutter) {
+        display: none;
+    }
 }
 </style>
