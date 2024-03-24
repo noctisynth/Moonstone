@@ -34,7 +34,7 @@ android {
         versionName = "0.2.0-alpha.6"
     }
     signingConfigs {
-        create("release") {
+        create("config") {
             keyAlias = keyProperties["keyAlias"] as String
             keyPassword = keyProperties["keyPassword"] as String
             storeFile = file(keyProperties["storeFile"] as String)
@@ -55,7 +55,6 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = true
-            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 *fileTree(".") { include("**/*.pro") }
                     .plus(getDefaultProguardFile("proguard-android-optimize.txt"))
