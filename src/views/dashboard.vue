@@ -135,6 +135,10 @@ const items = ref([
     width: 2px;
 }
 
+:deep(.p-splitter-horizontal > .p-splitter-gutter) {
+    cursor: ew-resize;
+}
+
 @media (max-width: 600px) {
     .element {
         display: none;
