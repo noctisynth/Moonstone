@@ -13,9 +13,30 @@ import SplitterPanel from 'primevue/splitterpanel';
 import Menu from 'primevue/menu';
 
 import Settings from '../components/Settings.vue';
+import JoinCommunityPanel from '../components/JoinCommunityPanel.vue'
+import NewCommunityPanel from '../components/NewCommunityPanel.vue'
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { useSessionsStore } from '../stores/sessions';
+
+const sessionsStore = useSessionsStore()
+
+const changeSession = (item: any) => {
+    return () => {
+        selectedSession.value = item
+    }
+}
+
+function sessionChanged() {
+    sessions.value[1].items = sessionsStore.communities.map((item: any) => {
+        return {
+            ...item,
+            command: changeSession(item)
+        };
+    });
+    console.table(sessions.value[1].items)
+}
 
 const sessions = ref([
     {
@@ -26,7 +47,7 @@ const sessions = ref([
         ]
     },
     {
-        label: '群组',
+        label: '社群',
         icon: 'pi pi-users',
         items: [
 
@@ -35,6 +56,8 @@ const sessions = ref([
 ])
 
 const showDialog = ref<boolean>(false)
+const showCreateCommunityPanel = ref<boolean>(false)
+const showJoinCommunityPanel = ref<boolean>(false)
 const toast = useToast()
 
 const selectedSession = ref()
@@ -50,9 +73,9 @@ const items = ref([
         items: [
             {
                 label: '连接信道',
-                icon: 'pi pi-plus',
+                icon: 'pi pi-link',
                 command: () => {
-                    toast.add({ 'severity': 'warn', 'summary': '中止', 'detail': '弦月测试期间不开放信道测试接口。' })
+                    toast.add({ 'severity': 'warn', 'summary': '中止', 'detail': '弦月测试期间不开放信道测试接口。', 'life': 3000 })
                 }
             },
         ]
@@ -61,20 +84,43 @@ const items = ref([
         label: '通讯',
         items: [
             {
-                label: '添加群组',
+                label: '创建社群',
+                icon: 'pi pi-comments',
+                command: () => showCreateCommunityPanel.value = true
+            },
+            {
+                label: '添加社群',
                 icon: 'pi pi-user-plus',
-                command: () => {
-                    toast.add({ 'severity': 'warn', 'summary': '中止', 'detail': '请等待开放。' })
-                }
+                command: () => showJoinCommunityPanel.value = true
             }
         ]
     }
 ]);
+
+onMounted(() => {
+    sessionChanged()
+})
 </script>
 
 <template>
     <div class="w-full h-full">
         <Toast style="max-width: 90%;"></Toast>
+        <Dialog v-model:visible="showCreateCommunityPanel" modal class="max-w-full" style="width: 30rem;">
+            <template #header>
+                <div class="inline-flex align-items-center justify-content-center gap-2">
+                    <span class="font-bold white-space-nowrap">创建社群</span>
+                </div>
+            </template>
+            <NewCommunityPanel @on-close="showCreateCommunityPanel = false; sessionChanged()"></NewCommunityPanel>
+        </Dialog>
+        <Dialog v-model:visible="showJoinCommunityPanel" modal class="max-w-full" style="width: 30rem;">
+            <template #header>
+                <div class="inline-flex align-items-center justify-content-center gap-2">
+                    <span class="font-bold white-space-nowrap">加入社群</span>
+                </div>
+            </template>
+            <JoinCommunityPanel></JoinCommunityPanel>
+        </Dialog>
         <div class="flex flex-row h-full">
             <div
                 class="flex flex-column justify-content-between align-items-center p-3 bg-surface-300 border-right-2 border-200">
@@ -82,8 +128,8 @@ const items = ref([
                     <Avatar :label="'苏'"></Avatar>
                     <Divider layout="horizontal"></Divider>
                     <Button @click="toast.add({
-                        'summary': '暂未开放', 'detail': '插件系统暂未开放，暂不支持增删插件！', 'life': 3000, 'severity': 'warn'
-                    })" icon="pi pi-plus" plain text></Button>
+            'summary': '暂未开放', 'detail': '弦月测试期间插件系统暂不开放，暂不支持增删插件！', 'life': 3000, 'severity': 'warn'
+        })" icon="pi pi-plus" plain text></Button>
                 </div>
                 <div class="flex flex-column gap-3">
                     <Button @click="showDialog = true" icon="pi pi-cog" outlined></Button>
