@@ -15,6 +15,7 @@ import Menu from 'primevue/menu';
 import Settings from '../components/Settings.vue';
 import JoinCommunityPanel from '../components/JoinCommunityPanel.vue'
 import NewCommunityPanel from '../components/NewCommunityPanel.vue'
+import Main from '../components/Main.vue'
 
 import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
@@ -35,7 +36,6 @@ function sessionChanged() {
             command: changeSession(item)
         };
     });
-    console.table(sessions.value[1].items)
 }
 
 const sessions = ref([
@@ -164,6 +164,9 @@ onMounted(() => {
                         <div v-if="!selectedSession"
                             class="w-full h-full flex flex-column justify-content-center align-items-center">
                             <img src="/icon.png" width="300"></img>
+                        </div>
+                        <div v-else>
+                            <Main></Main>
                         </div>
                     </SplitterPanel>
                 </Splitter>
