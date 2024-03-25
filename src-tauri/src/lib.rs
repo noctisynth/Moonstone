@@ -1,5 +1,6 @@
 pub mod api {
     pub mod account;
+    pub mod community;
     pub mod session;
 }
 pub mod utils {
@@ -8,6 +9,7 @@ pub mod utils {
 pub mod exceptions;
 
 use api::account::{account, login, register};
+use api::community;
 use api::session::alive;
 use serde_json::json;
 use utils::checks::{internet, node_status, security, system};
@@ -83,6 +85,32 @@ async fn register_handler(
     }
 }
 
+#[tauri::command]
+async fn new_community_handler(
+    node: String,
+    session_key: String,
+    name: String,
+    security_level: i32,
+    cross_origin: bool,
+    token: Option<String>,
+) -> Result<String, ()> {
+    match community::new(
+        &node,
+        &session_key,
+        &name,
+        security_level,
+        cross_origin,
+        token,
+    )
+    .await
+    {
+        Ok(id) => Ok(json!({"status": true, "error": json!("null"), "id": id}).to_string()),
+        Err(error) => Ok(
+            json!({"status": false, "error": error.to_string(), "id": json!("null")}).to_string(),
+        ),
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -96,7 +124,8 @@ pub fn run() {
             check_system,
             check_security,
             check_node,
-            register_handler
+            register_handler,
+            new_community_handler
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
