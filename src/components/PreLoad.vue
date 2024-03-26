@@ -17,7 +17,8 @@ const error = ref<string>();
 const fetchData = async () => {
     let permissionGranted = await isPermissionGranted();
     if (!permissionGranted) {
-        await requestPermission();
+        const permission = await requestPermission();
+        permissionGranted = permission === 'granted';
     }
     if (debugstore.debug) {
         return true
@@ -27,7 +28,6 @@ const fetchData = async () => {
 
     if (loginstore.session_key != null && loginstore.node != null) {
         info.value = "登录中...";
-        sendNotification({ title: '月长石', body: "登录中..." });
         callback = JSON.parse(
             await invoke("session_alive", { server: loginstore.node, sessionkey: loginstore.session_key })
         );
@@ -43,7 +43,6 @@ const fetchData = async () => {
             } else {
                 info.value = "登录验证成功！";
                 loginstore.isLoggedIn = true
-                sendNotification({ title: '月光石', body: info.value });
                 return true;
             }
         } else {
@@ -68,12 +67,15 @@ fetchData().then((sessionAlive) => {
 </script>
 
 <template>
-    <div class="card flex align-items-center justify-content-center" style="padding-top: 39vh;">
-        <ProgressSpinner style="width: 17%; height: 17%" strokeWidth="3" animationDuration="1s" aria-label="预加载..." />
-    </div>
-    <div class="card flex align-items-center justify-content-center" style="padding-top: 20vh;">
-        <small class="p-info" id="text-info">{{ info || null }}</small>
-        <small class="p-error" id="text-error">{{ error || null }}</small>
+    <div class="w-full h-full">
+        <div class="card flex align-items-center justify-content-center" style="padding-top: 39vh;">
+            <ProgressSpinner style="width: 17%; height: 17%" strokeWidth="3" animationDuration="1s"
+                aria-label="预加载..." />
+        </div>
+        <div class="card flex align-items-center justify-content-center" style="padding-top: 20vh;">
+            <small class="p-info" id="text-info">{{ info || null }}</small>
+            <small class="p-error" id="text-error">{{ error || null }}</small>
+        </div>
     </div>
 </template>
 

@@ -21,6 +21,18 @@ import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useSessionsStore } from '../stores/sessions';
 
+const screenWidth = ref<number>(window.innerWidth)
+const mobile = ref<boolean>(false)
+function onResize() {
+    screenWidth.value = window.innerWidth
+    if (screenWidth.value < 600) {
+        mobile.value = true
+    } else {
+        mobile.value = false
+    }
+}
+window.onresize = onResize;
+
 const sessionsStore = useSessionsStore()
 
 const changeSession = (item: any) => {
@@ -98,6 +110,7 @@ const items = ref([
 ]);
 
 onMounted(() => {
+    onResize()
     sessionChanged()
 })
 </script>
@@ -122,8 +135,10 @@ onMounted(() => {
             <JoinCommunityPanel></JoinCommunityPanel>
         </Dialog>
         <div class="flex flex-row h-full">
-            <div
-                class="flex flex-column justify-content-between align-items-center p-3 bg-surface-300 border-right-2 border-200">
+            <div :class="[
+            'flex flex-column justify-content-between align-items-center bg-surface-300 border-right-2 border-200',
+            ((mobile && selectedSession) ? 'hidden' : ''),
+            (mobile ? 'p-2' : 'p-3')]">
                 <div class="flex flex-column justify-content-center align-items-center">
                     <Avatar :label="'苏'"></Avatar>
                     <Divider layout="horizontal"></Divider>
@@ -145,7 +160,8 @@ onMounted(() => {
             </div>
             <div class="w-full">
                 <Splitter class="w-full h-full border-none">
-                    <SplitterPanel :size="26" style="min-width: 12rem;">
+                    <SplitterPanel :size="26" style="min-width: 12rem;"
+                        :class="[((mobile && selectedSession) ? 'hidden' : '')]">
                         <div class="w-full h-full flex flex-column gap-3 p-2">
                             <div class="inline-flex justify-content-between gap-2 max-w-full">
                                 <IconField iconPosition="left">
@@ -160,13 +176,13 @@ onMounted(() => {
                             <PanelMenu :model="sessions" multiple class="w-full"></PanelMenu>
                         </div>
                     </SplitterPanel>
-                    <SplitterPanel :size="74" class="element">
+                    <SplitterPanel :size="74" :class="[((mobile && !selectedSession) ? 'hidden' : '')]" :minSize="50">
                         <div v-if="!selectedSession"
                             class="w-full h-full flex flex-column justify-content-center align-items-center">
                             <img src="/icon.png" width="300"></img>
                         </div>
                         <div v-else>
-                            <Main></Main>
+                            <Main :session="selectedSession" @on-close="selectedSession = null" :mobile="mobile"></Main>
                         </div>
                     </SplitterPanel>
                 </Splitter>
@@ -188,11 +204,11 @@ onMounted(() => {
     cursor: ew-resize;
 }
 
-@media (max-width: 600px) {
-    .element {
-        display: none;
-    }
+:deep(.hidden) {
+    display: none !important;
+}
 
+@media (max-width: 600px) {
     :deep(.p-splitter-gutter) {
         display: none;
     }
