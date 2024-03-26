@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { defineStore } from "pinia";
+import { useSessionsStore } from "./sessions";
 
 export const useLoginStore = defineStore("login", {
   state: () => {
@@ -53,9 +54,12 @@ export const useLoginStore = defineStore("login", {
       }
     },
     logout() {
-      this.isLoggedIn = false;
-      this.session_key = null;
-      localStorage.removeItem("session_key");
+      const sessionsStore = useSessionsStore()
+      const node = this.node;
+      localStorage.clear();
+      this.$reset()
+      this.node = node;
+      sessionsStore.$reset()
     },
     async register(
       tuta_mail: string,
