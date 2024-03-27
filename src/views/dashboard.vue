@@ -207,16 +207,8 @@ onMounted(() => {
     width: 2px !important;
 }
 
-:deep(.p-splitter-gutter-handle[aria-orientation="vertical"]) {
-    height: 2px !important;
-}
-
 :deep(.p-splitter-horizontal > .p-splitter-gutter) {
     cursor: ew-resize;
-}
-
-:deep(.p-splitter-vertical > .p-splitter-gutter) {
-    cursor: ns-resize;
 }
 
 :deep(.hidden) {
