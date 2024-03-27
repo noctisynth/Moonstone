@@ -20,7 +20,11 @@ import Main from '../components/Main.vue'
 import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useSessionsStore } from '../stores/sessions';
+import { useRouter } from 'vue-router';
 
+import { generateRandomString } from '../scripts/random.ts';
+
+const router = useRouter()
 const screenWidth = ref<number>(window.innerWidth)
 const mobile = ref<boolean>(false)
 function onResize() {
@@ -38,6 +42,7 @@ const sessionsStore = useSessionsStore()
 const changeSession = (item: any) => {
     return () => {
         selectedSession.value = item
+        router.push("/dashboard?" + generateRandomString(4) + "=" + generateRandomString(10))
     }
 }
 
@@ -192,7 +197,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-:deep(.p-divider.p-divider-horizontal:before) {
+:deep(.p-divider .p-divider-horizontal:before) {
     border-top-width: 2px;
 }
 

@@ -15,7 +15,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: routes,
 });
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to, from, next) => {
   const loginstore = useLoginStore();
   if (to.path === "/login" || to.path === "/register") {
     if (loginstore.isLoggedIn) {
@@ -24,8 +24,12 @@ router.beforeEach((to, _from, next) => {
       next();
     }
   } else {
+    if (from.path === "/dashboard") {
+      next({ path: from.path });
+      return
+    }
     if (!loginstore.isLoggedIn) {
-      if (to.path != "/") {
+      if (to.path !== "/") {
         next({ path: "/" });
       } else {
         next();
