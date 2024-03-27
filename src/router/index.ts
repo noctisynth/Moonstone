@@ -9,6 +9,7 @@ const routes = [
   { path: "/", component: PreLoad },
   { path: "/login", component: Login },
   { path: "/dashboard", component: Dashboard },
+  { path: "/dashboard/:token(.*?)", component: Dashboard },
   { path: "/register", component: Register },
 ];
 const router = createRouter({
@@ -24,10 +25,6 @@ router.beforeEach((to, from, next) => {
       next();
     }
   } else {
-    if (from.path === "/dashboard") {
-      next({ path: from.path });
-      return
-    }
     if (!loginstore.isLoggedIn) {
       if (to.path !== "/") {
         next({ path: "/" });
@@ -35,7 +32,11 @@ router.beforeEach((to, from, next) => {
         next();
       }
     } else {
-      next();
+      if (from.path.startsWith("/dashboard") && to.path === "/") {
+        next({ path: from.path });
+      } else {
+        next();
+      }
     }
   }
 });

@@ -36,6 +36,9 @@ function onResize() {
     }
 }
 window.onresize = onResize;
+window.onpopstate = () => {
+    selectedSession.value = null
+}
 
 const sessionsStore = useSessionsStore()
 
