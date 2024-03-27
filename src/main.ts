@@ -3,6 +3,7 @@ import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import FocusTrap from "primevue/focustrap";
 import ToastService from "primevue/toastservice";
+import Tooltip from "primevue/tooltip";
 import router from "./router";
 
 // 视图
@@ -17,6 +18,7 @@ app.use(PrimeVue);
 app.use(router);
 app.use(createPinia());
 app.directive("focustrap", FocusTrap);
+app.directive("tooltip", Tooltip);
 app.use(ToastService);
 
 app.mount("#app");

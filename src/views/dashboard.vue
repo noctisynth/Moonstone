@@ -189,9 +189,8 @@ onMounted(() => {
                             class="w-full h-full flex flex-column justify-content-center align-items-center">
                             <img src="/icon.png" width="300"></img>
                         </div>
-                        <div v-else>
-                            <Main :session="selectedSession" @on-close="selectedSession = null" :mobile="mobile"></Main>
-                        </div>
+                        <Main v-else :session="selectedSession" @on-close="selectedSession = null" :mobile="mobile"
+                            class="w-full h-full"></Main>
                     </SplitterPanel>
                 </Splitter>
             </div>
@@ -204,12 +203,20 @@ onMounted(() => {
     border-top-width: 2px;
 }
 
-:deep(.p-splitter .p-splitter-gutter) {
-    width: 2px;
+:deep(.p-splitter-gutter-handle[aria-orientation="horizontal"]) {
+    width: 2px !important;
+}
+
+:deep(.p-splitter-gutter-handle[aria-orientation="vertical"]) {
+    height: 2px !important;
 }
 
 :deep(.p-splitter-horizontal > .p-splitter-gutter) {
     cursor: ew-resize;
+}
+
+:deep(.p-splitter-vertical > .p-splitter-gutter) {
+    cursor: ns-resize;
 }
 
 :deep(.hidden) {
