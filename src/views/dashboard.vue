@@ -22,8 +22,6 @@ import { useToast } from 'primevue/usetoast';
 import { useSessionsStore } from '../stores/sessions';
 import { useRouter } from 'vue-router';
 
-import { generateRandomString } from '../scripts/random.ts';
-
 const router = useRouter()
 const screenWidth = ref<number>(window.innerWidth)
 const mobile = ref<boolean>(false)
@@ -45,7 +43,7 @@ const sessionsStore = useSessionsStore()
 const changeSession = (item: any) => {
     return () => {
         selectedSession.value = item
-        router.push("/dashboard?" + generateRandomString(4) + "=" + generateRandomString(10))
+        router.push("/dashboard?page=")
     }
 }
 

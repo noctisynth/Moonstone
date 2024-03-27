@@ -7,7 +7,6 @@ import InputIcon from 'primevue/inputicon';
 import Textarea from 'primevue/textarea';
 import Listbox from 'primevue/listbox';
 import Badge from 'primevue/badge';
-import Toast from 'primevue/toast';
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
@@ -40,7 +39,6 @@ async function sendMessage() {
 
 <template>
     <div class="w-full h-full flex flex-column">
-        <Toast style="max-width: 90%;"></Toast>
         <Toolbar class="border-noround border-left-none border-top-none p-2">
             <template #start>
                 <div :class="['inline-flex gap-3 align-items-center', (mobile ? '' : 'pl-3')]">
