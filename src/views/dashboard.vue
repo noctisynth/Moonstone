@@ -33,10 +33,13 @@ function onResize() {
         mobile.value = false
     }
 }
-window.onresize = onResize;
-window.onpopstate = () => {
+function onClose() {
     selectedSession.value = null
+    router.go(-1)
+    router.push({ path: '/dashboard', replace: true })
 }
+window.onresize = onResize;
+window.onpopstate = onClose;
 
 const sessionsStore = useSessionsStore()
 
@@ -187,8 +190,9 @@ onMounted(() => {
                             class="w-full h-full flex flex-column justify-content-center align-items-center">
                             <img src="/icon.png" width="300"></img>
                         </div>
-                        <Main v-else :session="selectedSession" @on-close="selectedSession = null" :mobile="mobile"
-                            class="w-full h-full"></Main>
+                        <Main v-else :session="selectedSession" @on-close="onClose" :mobile="mobile"
+                            class="w-full h-full">
+                        </Main>
                     </SplitterPanel>
                 </Splitter>
             </div>
