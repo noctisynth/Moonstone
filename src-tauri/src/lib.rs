@@ -1,3 +1,4 @@
+extern crate moonstone_db;
 pub mod api {
     pub mod account;
     pub mod community;
@@ -11,6 +12,7 @@ pub mod exceptions;
 use api::account::{account, login, register};
 use api::community;
 use api::session::alive;
+use moonstone_db::sessions;
 use serde_json::json;
 use utils::checks::{internet, node_status, security, system};
 
@@ -111,6 +113,45 @@ async fn new_community_handler(
     }
 }
 
+#[tauri::command]
+async fn session_new_community(
+    node: String,
+    name: String,
+    token: Option<String>,
+) -> Result<String, ()> {
+    match sessions::new_community(node, name, token).await {
+        Ok(_) => Ok(json!({"status": true, "error": json!("null")}).to_string()),
+        Err(error) => Ok(
+            json!({"status": false, "error": error.to_string(), "id": json!("null")}).to_string(),
+        ),
+    }
+}
+
+#[tauri::command]
+async fn session_update_community(
+    id: String,
+    node: String,
+    name: String,
+    token: Option<String>,
+) -> Result<String, ()> {
+    match sessions::update_community(id, node, name, token).await {
+        Ok(_) => Ok(json!({"status": true, "error": json!("null")}).to_string()),
+        Err(error) => Ok(
+            json!({"status": false, "error": error.to_string(), "id": json!("null")}).to_string(),
+        ),
+    }
+}
+
+#[tauri::command]
+async fn database_init() -> Result<String, ()> {
+    match moonstone_db::init().await {
+        Ok(_) => Ok(json!({"status": true, "error": json!("null")}).to_string()),
+        Err(error) => Ok(
+            json!({"status": false, "error": error.to_string(), "id": json!("null")}).to_string(),
+        ),
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -125,7 +166,11 @@ pub fn run() {
             check_security,
             check_node,
             register_handler,
-            new_community_handler
+            new_community_handler,
+            // 会话控制
+            database_init,
+            session_new_community,
+            session_update_community
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
