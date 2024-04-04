@@ -38,7 +38,7 @@ pub async fn new(
         }
     };
     match json["status"].as_bool() {
-        Some(_) => {},
+        Some(_) => {}
         None => {
             return Err(Exception::BadResponse {
                 detail: res.text().unwrap(),
