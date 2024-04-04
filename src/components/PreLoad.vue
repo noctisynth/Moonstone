@@ -6,10 +6,12 @@ import { isPermissionGranted, requestPermission, sendNotification } from '@tauri
 import ProgressSpinner from "primevue/progressspinner";
 import { useDebugStore } from "../stores/debug";
 import { useLoginStore } from "../stores/login";
+import { useSessionsStore } from "../stores/sessions";
 
 const router = useRouter();
-const debugstore = useDebugStore()
-const loginstore = useLoginStore()
+const debugstore = useDebugStore();
+const loginStore = useLoginStore();
+const sessionsStore = useSessionsStore();
 
 const info = ref<string | null>();
 const error = ref<string>();
@@ -22,28 +24,28 @@ const fetchData = async () => {
     }
 
     if (debugstore.debug) {
-        return true
+        return true;
     }
 
     let callback: { status: boolean; is_alive: boolean; error: string };
 
-    if (loginstore.session_key != null && loginstore.node != null) {
+    if (loginStore.session_key != null && loginStore.node != null) {
         info.value = "登录中...";
         callback = JSON.parse(
-            await invoke("session_alive", { server: loginstore.node, sessionkey: loginstore.session_key })
+            await invoke("session_alive", { server: loginStore.node, sessionkey: loginStore.session_key })
         );
         if (callback.status) {
             if (!callback.is_alive) {
                 info.value = null;
                 error.value = "登录验证失败，请重新登陆！";
                 sendNotification({ title: '月长石', body: error.value });
-                loginstore.session_key = null
-                loginstore.isLoggedIn = false
+                loginStore.session_key = null;
+                loginStore.isLoggedIn = false;
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 return false;
             } else {
                 info.value = "登录验证成功！";
-                loginstore.isLoggedIn = true
+                loginStore.isLoggedIn = true;
                 return true;
             }
         } else {
@@ -62,6 +64,7 @@ fetchData().then((sessionAlive) => {
     if (!sessionAlive) {
         router.push({ path: "/login" });
     } else {
+        sessionsStore.init();
         router.push({ path: "/dashboard" });
     }
 });

@@ -3,12 +3,12 @@ import { onMounted } from 'vue';
 import { isLightTheme, useThemeStore } from './stores/theme';
 import { usePrimeVue } from 'primevue/config';
 
-const themestore = useThemeStore()
-const PrimeVue = usePrimeVue()
+const themeStore = useThemeStore();
+const PrimeVue = usePrimeVue();
 
 onMounted(() => {
-    if ((themestore.dark && isLightTheme()) || (!themestore.dark && !isLightTheme()))
-        themestore.changeTheme(PrimeVue)
+    if ((themeStore.dark && isLightTheme()) || (!themeStore.dark && !isLightTheme()))
+        themeStore.changeTheme(PrimeVue);
 })
 </script>
 
