@@ -12,18 +12,6 @@ export const useSessionsStore = defineStore("sessions", {
   },
 
   actions: {
-    async initDatabase() {
-      if (!this.database_initialized) {
-        const res: { status: boolean; error: string } = JSON.parse(
-          await invoke("database_init", {})
-        );
-        if (res.status) {
-          return { status: true, msg: "数据库初始化成功！" };
-        } else {
-          return { status: false, msg: "数据库初始化失败: " + res.error };
-        }
-      }
-    },
     async newCommunity(
       name: string,
       security_level: number,
@@ -43,29 +31,9 @@ export const useSessionsStore = defineStore("sessions", {
         })
       );
       if (res.status) {
-        const sess = await this.newCommunitySession(
-          loginstore.node,
-          name,
-          token
-        );
-        if (sess.status) return { status: true, msg: "社群创建成功！" };
-        else return sess;
-      } else {
-        return { status: false, msg: "社群创建失败: " + res.error };
-      }
-    },
-    async newCommunitySession(node: string, name: string, token?: string) {
-      const res: { status: boolean; error: string } = JSON.parse(
-        await invoke("session_new_community", {
-          node: node,
-          name: name,
-          token: token,
-        })
-      );
-      if (res.status) {
         return { status: true, msg: "社群创建成功！" };
       } else {
-        return { status: false, msg: "数据库错误: " + res.error };
+        return { status: false, msg: "社群创建失败: " + res.error };
       }
     },
   },

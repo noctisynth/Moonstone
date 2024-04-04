@@ -6,12 +6,10 @@ import { isPermissionGranted, requestPermission, sendNotification } from '@tauri
 import ProgressSpinner from "primevue/progressspinner";
 import { useDebugStore } from "../stores/debug";
 import { useLoginStore } from "../stores/login";
-import { useSessionsStore } from "../stores/sessions";
 
 const router = useRouter();
 const debugstore = useDebugStore()
 const loginstore = useLoginStore()
-const sessionsStore = useSessionsStore()
 
 const info = ref<string | null>();
 const error = ref<string>();
@@ -22,8 +20,6 @@ const fetchData = async () => {
         const permission = await requestPermission();
         permissionGranted = permission === 'granted';
     }
-    if (!sessionsStore.database_initialized)
-        await sessionsStore.initDatabase()
 
     if (debugstore.debug) {
         return true
