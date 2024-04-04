@@ -10,9 +10,10 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "2.0.0-beta.6",
+    "@tauri-apps/api": "2.0.0-beta.7",
     "@tauri-apps/plugin-notification": "2.0.0-beta.2",
     "@tauri-apps/plugin-shell": "2.0.0-beta.2",
+    "@tauri-apps/plugin-sql": "2.0.0-beta.2",
     "marked": "^12.0.1",
     "pinia": "^2.1.7",
     "primeflex": "^3.3.1",
@@ -23,9 +24,8 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "2.0.0-beta.11",
+    "@tauri-apps/cli": "2.0.0-beta.12",
     "@types/node": "^20.12.4",
-    "@types/uuid": "^9.0.8",
     "@vitejs/plugin-vue": "^5.0.4",
     "internal-ip": "^8.0.0",
     "typescript": "^5.4.3",

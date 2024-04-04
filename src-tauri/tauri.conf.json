@@ -1,7 +1,10 @@
 {
+  "productName": "Moonstone",
+  "version": "0.2.0",
+  "identifier": "org.noctisynth.mst",
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
@@ -36,9 +39,6 @@
     "copyright": "Copyright (c) 2011-PRESENT Noctisynth, org.",
     "licenseFile": "../LICENSE"
   },
-  "productName": "Moonstone",
-  "version": "0.2.0",
-  "identifier": "org.noctisynth.mst",
   "plugins": {},
   "app": {
     "windows": [
