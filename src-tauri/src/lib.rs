@@ -12,6 +12,7 @@ use api::account::{account, login, register};
 use api::community;
 use api::session::alive;
 use serde_json::json;
+use tauri_plugin_sql::{Migration, MigrationKind};
 use utils::checks::{internet, node_status, security, system};
 
 #[tauri::command]
@@ -113,7 +114,33 @@ async fn new_community_handler(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let sessions_migrations = vec![Migration {
+        version: 1,
+        description: "create_initail_tables",
+        sql: r#"CREATE TABLE IF NOT EXISTS community (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT NOT NULL,
+            node TEXT NOT NULL,
+            sequence TEXT NOT NULL,
+            name TEXT NOT NULL,
+            token TEXT
+        );
+        CREATE TABLE IF NOT EXISTS tunnels (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT NOT NULL,
+            node TEXT NOT NULL,
+            iden TEXT NOT NULL,
+            token TEXT NOT NULL
+        );
+        "#,
+        kind: MigrationKind::Up,
+    }];
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_sql::Builder::default()
+                .add_migrations("sqlite:sessions.db", sessions_migrations)
+                .build(),
+        )
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
