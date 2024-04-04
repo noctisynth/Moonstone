@@ -47,6 +47,9 @@ const onSubmit = handleCheck(async () => {
     if (res.status) {
         toast.add({ 'severity': 'success', 'summary': '成功', 'detail': res.msg, 'life': 3000 })
         emit("onClose")
+    } else {
+        inProgress.value = false;
+        toast.add({ 'severity': 'error', 'summary': '失败', 'detail': res.msg, 'life': 3000 })
     }
 })
 </script>
