@@ -172,7 +172,7 @@ onMounted(() => {
             <div class="w-full">
                 <Splitter class="w-full h-full border-none">
                     <SplitterPanel :size="26" style="min-width: 12rem;"
-                        :class="[((mobile && selectedSession) ? 'hidden' : '')]">
+                        :class="[((mobile && selectedSession) ? 'hidden' : ''),]">
                         <div class="w-full h-full flex flex-column gap-3 p-2">
                             <div class="inline-flex justify-content-between gap-2 max-w-full">
                                 <IconField iconPosition="left">
@@ -184,9 +184,10 @@ onMounted(() => {
                                 <Menu ref="menu" id="overlay_menu" :model="items" :popup="true"></Menu>
                             </div>
                             <Divider class="m-0"></Divider>
-                            <PanelMenu :model="sessions" multiple class="w-full">
+                            <PanelMenu :model="sessions" multiple class="w-full overflow-y-auto">
                                 <template #item="{ item, root }">
-                                    <a v-ripple class="p-ripple flex align-items-center px-3 cursor-pointer border-round"
+                                    <a v-ripple
+                                        class="p-ripple flex align-items-center px-3 cursor-pointer border-round"
                                         :class="[(root ? 'py-2' : 'py-2'), ((!root && selectedSession && selectedSession.id == item.id) ? 'bg-primary-reverse' : '')]">
                                         <span :class="[item.icon, 'text-primary']"></span>
                                         <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.name }}</span>
@@ -229,6 +230,10 @@ onMounted(() => {
 
 :deep(.p-panelmenu .p-panelmenu-content) {
     padding: 0 0.25rem 0 0.25rem;
+}
+
+:deep(::-webkit-scrollbar) {
+    display: none;
 }
 
 @media (max-width: 600px) {
