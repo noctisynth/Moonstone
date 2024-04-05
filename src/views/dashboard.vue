@@ -147,8 +147,8 @@ onMounted(() => {
         </Dialog>
         <div class="flex flex-row h-full">
             <div :class="[
-            'flex flex-column justify-content-between align-items-center bg-surface-300 border-right-2 border-200',
-            ((mobile && selectedSession) ? 'hidden' : ''),
+            'flex-column justify-content-between align-items-center bg-surface-300 border-right-2 border-200',
+            ((mobile && selectedSession) ? 'hidden' : 'flex'),
             (mobile ? 'p-2' : 'p-3')]">
                 <div class="flex flex-column justify-content-center align-items-center">
                     <Avatar :label="'苏'"></Avatar>
@@ -222,10 +222,6 @@ onMounted(() => {
 
 :deep(.p-splitter-horizontal > .p-splitter-gutter) {
     cursor: ew-resize;
-}
-
-:deep(.hidden) {
-    display: none !important;
 }
 
 :deep(.p-panelmenu .p-panelmenu-content) {
