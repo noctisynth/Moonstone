@@ -17,6 +17,7 @@
     "notification:default",
     "webview:allow-internal-toggle-devtools",
     "sql:allow-load",
-    "sql:allow-select"
+    "sql:allow-select",
+    "sql:allow-execute"
   ]
 }
