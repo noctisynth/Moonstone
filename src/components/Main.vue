@@ -41,7 +41,7 @@ async function sendMessage() {
     <div class="w-full h-full flex flex-column">
         <Toolbar class="border-noround border-left-none border-top-none p-2">
             <template #start>
-                <div :class="['inline-flex gap-3 align-items-center', (mobile ? '' : 'pl-3')]">
+                <div :class="['inline-flex align-items-center', (mobile ? 'gap-1' : 'pl-3 gap-3')]">
                     <Button v-if="mobile" @click="emit('onClose')" icon="pi pi-arrow-left" plain text></Button>
                     <span>{{ session.name }}</span>
                 </div>

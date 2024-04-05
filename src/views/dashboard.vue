@@ -178,14 +178,22 @@ onMounted(() => {
                             <div class="inline-flex justify-content-between gap-2 max-w-full">
                                 <IconField iconPosition="left">
                                     <InputIcon class="pi pi-search"></InputIcon>
-                                    <InputText placeholder="搜索" class="w-full"></InputText>
+                                    <InputText id="search" placeholder="搜索" class="w-full"></InputText>
                                 </IconField>
                                 <Button type="button" @click="toggle" icon="pi pi-plus" size="small"
                                     aria-haspopup="true" aria-controls="overlay_menu" outlined></Button>
                                 <Menu ref="menu" id="overlay_menu" :model="items" :popup="true"></Menu>
                             </div>
                             <Divider class="m-0"></Divider>
-                            <PanelMenu :model="sessions" multiple class="w-full"></PanelMenu>
+                            <PanelMenu :model="sessions" multiple class="w-full">
+                                <template #item="{ item, root }">
+                                    <a v-ripple class="p-ripple flex align-items-center px-3 cursor-pointer border-round"
+                                        :class="[(root ? 'py-2' : 'py-2'), ((!root && selectedSession && selectedSession.id == item.id) ? 'bg-primary-reverse' : '')]">
+                                        <span :class="[item.icon, 'text-primary']"></span>
+                                        <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
+                                    </a>
+                                </template>
+                            </PanelMenu>
                         </div>
                     </SplitterPanel>
                     <SplitterPanel :size="74" :class="[((mobile && !selectedSession) ? 'hidden' : '')]" :minSize="50">
@@ -218,6 +226,10 @@ onMounted(() => {
 
 :deep(.hidden) {
     display: none !important;
+}
+
+:deep(.p-panelmenu .p-panelmenu-content) {
+    padding: 0 0.25rem 0 0.25rem;
 }
 
 @media (max-width: 600px) {
