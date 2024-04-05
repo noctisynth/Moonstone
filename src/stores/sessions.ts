@@ -5,11 +5,13 @@ import Database from "@tauri-apps/plugin-sql";
 
 export const useSessionsStore = defineStore("sessions", {
   state: () => {
-    let db: any;
+    let db: Database = new Database("sqlite:sessions.db");
+    let communities: any;
+    let tunnels: any;
     return {
       db: db,
-      tunnels: [],
-      communities: JSON.parse(localStorage.getItem("communitues") || "[]"),
+      tunnels: tunnels,
+      communities: communities,
       initailized: false,
     };
   },
@@ -18,11 +20,10 @@ export const useSessionsStore = defineStore("sessions", {
       if (this.initailized) return;
       const loginStore = useLoginStore();
       this.db = await Database.load("sqlite:sessions.db");
-      const communities = await this.db.select(
+      this.communities = await this.db.select(
         "SELECT * from community WHERE user = $1",
         [loginStore.session_key]
       );
-      console.log(communities);
       this.initailized = true;
     },
     async newCommunity(
@@ -31,12 +32,12 @@ export const useSessionsStore = defineStore("sessions", {
       cross_origin: boolean,
       token?: string
     ) {
-      const loginstore = useLoginStore();
-      if (!loginstore.node) return { status: false, msg: "节点未注册！" };
+      const loginStore = useLoginStore();
+      if (!loginStore.node) return { status: false, msg: "节点未注册！" };
       const res: { status: boolean; error: string; id: number } = JSON.parse(
         await invoke("new_community_handler", {
-          node: loginstore.node,
-          sessionKey: loginstore.session_key,
+          node: loginStore.node,
+          sessionKey: loginStore.session_key,
           name: name,
           securityLevel: security_level,
           crossOrigin: cross_origin,
@@ -44,6 +45,10 @@ export const useSessionsStore = defineStore("sessions", {
         })
       );
       if (res.status) {
+        await this.db.execute(
+          "INSERT OR REPLACE INTO community (user, node, sequence, name, token) VALUES ($1, $2, $3, $4, $5);  ",
+          [loginStore.session_key, loginStore.node, res.id, name, token || null]
+        );
         return { status: true, msg: "社群创建成功！" };
       } else {
         return { status: false, msg: "社群创建失败: " + res.error };

@@ -64,8 +64,9 @@ fetchData().then((sessionAlive) => {
     if (!sessionAlive) {
         router.push({ path: "/login" });
     } else {
-        sessionsStore.init();
-        router.push({ path: "/dashboard" });
+        sessionsStore.init().then(() => {
+            router.push({ path: "/dashboard" });
+        });
     }
 });
 </script>

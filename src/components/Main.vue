@@ -43,7 +43,7 @@ async function sendMessage() {
             <template #start>
                 <div :class="['inline-flex gap-3 align-items-center', (mobile ? '' : 'pl-3')]">
                     <Button v-if="mobile" @click="emit('onClose')" icon="pi pi-arrow-left" plain text></Button>
-                    <span>{{ session.label }}</span>
+                    <span>{{ session.name }}</span>
                 </div>
             </template>
             <template #end>

@@ -27,6 +27,7 @@ export const useLoginStore = defineStore("login", {
       return res;
     },
     async login(identity: string, password: string) {
+      const sessionsStore = useSessionsStore();
       if (!this.node) {
         return { status: false, msg: "节点未设置！" };
       }
@@ -42,6 +43,7 @@ export const useLoginStore = defineStore("login", {
         this.isLoggedIn = true;
         this.session_key = callback.session_key;
         localStorage.setItem("session_key", callback.session_key);
+        sessionsStore.init();
         return { status: true, msg: "登陆成功！" };
       } else {
         return {
@@ -54,12 +56,12 @@ export const useLoginStore = defineStore("login", {
       }
     },
     logout() {
-      const sessionsStore = useSessionsStore()
+      const sessionsStore = useSessionsStore();
       const node = this.node;
       localStorage.clear();
-      this.$reset()
+      this.$reset();
       this.node = node;
-      sessionsStore.$reset()
+      sessionsStore.$reset();
     },
     async register(
       tuta_mail: string,

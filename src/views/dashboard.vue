@@ -54,6 +54,8 @@ function sessionChanged() {
     sessions.value[1].items = sessionsStore.communities.map((item: any) => {
         return {
             ...item,
+            label: item.name,
+            icon: 'pi pi-users',
             command: changeSession(item)
         };
     });
@@ -119,6 +121,7 @@ const items = ref([
 ]);
 
 onMounted(() => {
+    console.table(sessionsStore.communities)
     onResize()
     sessionChanged()
 })
