@@ -49,6 +49,10 @@ export const useSessionsStore = defineStore("sessions", {
           "INSERT OR REPLACE INTO community (user, node, sequence, name, token) VALUES ($1, $2, $3, $4, $5);  ",
           [loginStore.session_key, loginStore.node, res.id, name, token || null]
         );
+        this.communities = await this.db.select(
+          "SELECT * from community WHERE user = $1",
+          [loginStore.session_key]
+        );
         return { status: true, msg: "社群创建成功！" };
       } else {
         return { status: false, msg: "社群创建失败: " + res.error };

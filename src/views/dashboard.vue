@@ -54,7 +54,6 @@ function sessionChanged() {
     sessions.value[1].items = sessionsStore.communities.map((item: any) => {
         return {
             ...item,
-            label: item.name,
             icon: 'pi pi-users',
             command: changeSession(item)
         };
@@ -63,14 +62,14 @@ function sessionChanged() {
 
 const sessions = ref([
     {
-        label: '信道',
+        name: '信道',
         icon: 'pi pi-inbox',
         items: [
 
         ]
     },
     {
-        label: '社群',
+        name: '社群',
         icon: 'pi pi-users',
         items: [
 
@@ -190,7 +189,7 @@ onMounted(() => {
                                     <a v-ripple class="p-ripple flex align-items-center px-3 cursor-pointer border-round"
                                         :class="[(root ? 'py-2' : 'py-2'), ((!root && selectedSession && selectedSession.id == item.id) ? 'bg-primary-reverse' : '')]">
                                         <span :class="[item.icon, 'text-primary']"></span>
-                                        <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
+                                        <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.name }}</span>
                                     </a>
                                 </template>
                             </PanelMenu>

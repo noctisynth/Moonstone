@@ -137,7 +137,7 @@ const register = handleRegister(async () => {
     error.value = res.msg
     info.value = null
   }
-  
+
 })
 
 const themestore = useThemeStore()
@@ -208,7 +208,7 @@ const inProgress = ref<boolean>(false)
                     <form @click="register" class="flex flex-column gap-3">
                       <IconField>
                         <InputIcon class="pi pi-envelope"></InputIcon>
-                        <InputText id="mail-input" v-model="mail" class="w-full" placeholder="Tuta 邮箱" disabled/>
+                        <InputText id="mail-input" v-model="mail" class="w-full" placeholder="Tuta 邮箱" disabled />
                       </IconField>
                       <IconField>
                         <InputIcon class="pi pi-user"></InputIcon>
@@ -216,20 +216,21 @@ const inProgress = ref<boolean>(false)
                       </IconField>
                       <small v-if="invalidUsername" class="p-error" id="username-error">{{ invalidUsername
                         }}</small>
-                        <IconField>
+                      <IconField>
                         <InputIcon class="pi pi-tag"></InputIcon>
                         <InputText id="nickname-input" v-model="nickname" class="w-full" placeholder="昵称" />
                       </IconField>
                       <small v-if="invalidNickname" class="p-error" id="nickname-error">{{ invalidNickname
                         }}</small>
-                        <Password v-model="password" type="text" inputId="password-input" class="w-full"
+                      <Password v-model="password" type="text" inputId="password-input" class="w-full"
                         aria-describedby="password-error" toggleMask placeholder="密码" />
                       <small v-if="invalidPassword" class="p-error" id="password-error">{{ invalidPassword
                         }}</small>
-                        <Password v-model="retype_password" type="text" inputId="retype-password-input" :feedback="false" class="w-full"
-                        aria-describedby="retype-password-error" toggleMask placeholder="确认密码" />
-                      <small v-if="invalidRetypePassword" class="p-error" id="retype-password-error">{{ invalidRetypePassword
-                        }}</small>
+                      <Password v-model="retype_password" type="text" inputId="retype-password-input" :feedback="false"
+                        class="w-full" aria-describedby="retype-password-error" toggleMask placeholder="确认密码" />
+                      <small v-if="invalidRetypePassword" class="p-error" id="retype-password-error">{{
+            invalidRetypePassword
+          }}</small>
                       <small v-if="info" class="p-info" id="text-info">{{ info }}</small>
                       <small v-if="error" class="p-error" id="text-error">{{ error }}</small>
                       <div class="flex pt-4 justify-content-between">
