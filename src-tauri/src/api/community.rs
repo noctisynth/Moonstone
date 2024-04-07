@@ -1,3 +1,4 @@
+use anyhow::{Error, Result};
 use oblivion::api;
 use serde_json::json;
 
@@ -10,7 +11,7 @@ pub async fn new(
     security_level: i32,
     cross_origin: bool,
     token: Option<String>,
-) -> Result<i64, Exception> {
+) -> Result<String> {
     let mut res = match api::post(
         format!("{node}/community/new").as_str(),
         json!({
@@ -26,25 +27,25 @@ pub async fn new(
     {
         Ok(res) => res,
         Err(error) => {
-            return Err(Exception::ConnectionError { error });
+            return Err(Error::from(Exception::ConnectionError { error }));
         }
     };
     let json = match res.json() {
         Ok(json) => json,
         Err(error) => {
-            return Err(Exception::BadResponse {
+            return Err(Error::from(Exception::BadResponse {
                 detail: error.to_string(),
-            });
+            }));
         }
     };
     match json["status"].as_bool() {
         Some(_) => {}
         None => {
-            return Err(Exception::BadResponse {
+            return Err(Error::from(Exception::BadResponse {
                 detail: res.text().unwrap(),
-            });
+            }));
         }
     };
 
-    Ok(json["community_id"].as_i64().unwrap())
+    Ok(json["community_id"].as_str().unwrap().to_string())
 }
