@@ -34,7 +34,7 @@ export const useSessionsStore = defineStore("sessions", {
     ) {
       const loginStore = useLoginStore();
       if (!loginStore.node) return { status: false, msg: "节点未注册！" };
-      const res: { status: boolean; error: string; id: number } = JSON.parse(
+      const res: { status: boolean; error: string; id: string } = JSON.parse(
         await invoke("new_community_handler", {
           node: loginStore.node,
           sessionKey: loginStore.session_key,
