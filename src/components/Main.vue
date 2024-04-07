@@ -6,12 +6,14 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import Textarea from 'primevue/textarea';
 import Listbox from 'primevue/listbox';
-import Badge from 'primevue/badge';
-import { ref } from 'vue';
+import Avatar from 'primevue/avatar';
+import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { generateRandomString } from '../scripts/random';
 
 const emit = defineEmits(['onClose'])
 const toast = useToast()
+let marked: any
 
 defineModel('session');
 const mobile = defineModel('mobile');
@@ -24,17 +26,80 @@ const showSidebar = ref<boolean>(false)
 const input = ref<string | null>()
 
 const selectedMessage = ref();
-const messages = ref([])
+const messages = ref<{
+    user: {
+        id: string,
+        nickname: string,
+    },
+    items: {
+        id: string,
+        text: string,
+        status: string
+    }[]
+}[]>([])
 
-async function render(text: string) {
-    const marked = await import('marked')
+function render(text: string) {
     if (text.split("\n\n").length <= 1) return text
     else return marked.marked(text)
 }
 
-async function sendMessage() {
-    toast.add({ 'severity': 'warn', 'summary': '暂未开放', 'detail': '消息接口暂未开放！', 'life': 3000 })
+function updateStatus(id: string, status: string) {
+    let messageIndex: number = -1
+    let itemIndex: number = -1;
+    messages.value.forEach(message => {
+        message.items.forEach(item => {
+            if (item.id === id) {
+                messageIndex = messages.value.indexOf(message)
+                itemIndex = message.items.indexOf(item)
+            }
+        });
+    });
+    if (messageIndex === -1 || itemIndex === -1)
+        return toast.add({ 'severity': 'error', 'summary': '错误', 'detail': '消息不存在！', 'life': 3000 })
+    messages.value[messageIndex].items[itemIndex].status = status
 }
+
+async function sendMessage(value: any) {
+    toast.add({ 'severity': 'warn', 'summary': '暂未开放', 'detail': '消息接口暂未开放！', 'life': 3000 })
+    console.log(value.id)
+    updateStatus(value.id, "failed")
+}
+
+async function onSend() {
+    if (!input.value) return
+    if (messages.value.length == 0)
+        messages.value.push({
+            user: {
+                id: 'ssss',
+                nickname: '苏向夜',
+            },
+            items: []
+        })
+
+    const message = {
+        id: generateRandomString(10),
+        text: input.value,
+        status: 'sending',
+    }
+
+    if (messages.value[messages.value.length - 1].user.id === "ssss")
+        messages.value[messages.value.length - 1].items.push(message)
+    else
+        messages.value.push({
+            user: {
+                id: 'ssss',
+                nickname: '苏向夜',
+            },
+            items: [message]
+        })
+    sendMessage(message);
+    console.table(messages.value)
+    input.value = null;
+}
+
+onMounted(async () => {
+    marked = await import('marked')
+})
 </script>
 
 <template>
@@ -50,12 +115,12 @@ async function sendMessage() {
                 <Button @click="showSidebar = true" icon="pi pi-ellipsis-h" plain text></Button>
             </template>
         </Toolbar>
-        <Sidebar v-model:visible="showSidebar" :header="session.label" position="right" class="max-w-full">
+        <Sidebar v-model:visible="showSidebar" :header="session.name" position="right" class="max-w-full">
             <p>此处功能区为弦月测试范围，但是尚未实装。</p>
         </Sidebar>
         <div class="flex flex-column w-full h-full">
             <div class="card w-full flex justify-content-center h-full">
-                <Listbox v-model="selectedMessage" :options="messages" optionLabel="text" optionValue="sequence"
+                <Listbox v-model="selectedMessage" :options="messages" optionLabel="text" optionValue="id"
                     optionGroupLabel="user.nickname" optionGroupChildren="items" class="w-full h-full border-none">
                     <template #empty>
                         <div class="flex align-items-center justify-content-center">
@@ -69,21 +134,20 @@ async function sendMessage() {
                     </template>
                     <template #option="slot">
                         <div v-tooltip.bottom="slot.option.timestamp">
-                            <div class="flex text-white">
+                            <div class="flex text-white flex-row justify-content-between">
                                 <div v-html="render(slot.option.text)"></div>
-                                <div class="flex align-items-center align-self-end pb-1" style="margin-left: auto;">
-                                    <Badge v-if="slot.option.status === 'sending'"
-                                        class="bg-primary flex justify-content-center align-items-center pi pi-spin pi-spinner">
-                                    </Badge>
-                                    <Badge v-else-if="slot.option.status === 'failed'"
-                                        class="bg-red-900 flex justify-content-center align-items-center pi pi-times">
-                                    </Badge>
-                                    <Badge v-else-if="slot.option.status === 'verified'"
-                                        class="bg-green-900 flex justify-content-center align-items-center pi pi-verified">
-                                    </Badge>
-                                    <Badge v-else-if="slot.option.status === 'check'"
-                                        class="bg-green-900 flex justify-content-center align-items-center pi pi-check">
-                                    </Badge>
+                                <div class="flex align-items-center align-self-end py-1">
+                                    <Avatar v-if="slot.option.status === 'sending'" icon="pi pi-spin pi-spinner text-xs"
+                                        class="bg-primary w-1rem h-1rem" shape="circle"></Avatar>
+                                    <Avatar v-else-if="slot.option.status === 'failed'" icon="pi pi-times text-xs"
+                                        class="bg-red-900 w-1rem h-1rem" shape="circle">
+                                    </Avatar>
+                                    <Avatar v-else-if="slot.option.status === 'verified'" icon="pi pi-verified text-xs"
+                                        class="bg-green-900 w-1rem h-1rem" shape="circle">
+                                    </Avatar>
+                                    <Avatar v-else-if="slot.option.status === 'check'" icon="pi pi-check"
+                                        class="bg-green-900 w-1rem h-1rem" shape="circle">
+                                    </Avatar>
                                 </div>
                             </div>
                         </div>
@@ -95,11 +159,11 @@ async function sendMessage() {
                     :class="['w-full h-full inline-flex justify-content-center align-items-center', (mobile ? 'p-2 gap-2' : 'p-3 gap-3')]">
                     <IconField class="w-full h-full" icon-position="left">
                         <InputIcon class="pi pi-lock"></InputIcon>
-                        <Textarea rows="1" maxlength="512" v-model="input" auto-resize class="w-full"
+                        <Textarea name="message" rows="1" maxlength="512" v-model="input" auto-resize class="w-full"
                             placeholder="发送加密信息"></Textarea>
                     </IconField>
                     <div class="flex justify-content-end flex-column h-full">
-                        <Button @click="sendMessage" icon="pi pi-send"></Button>
+                        <Button @click="onSend" icon="pi pi-send"></Button>
                     </div>
                 </div>
             </div>
