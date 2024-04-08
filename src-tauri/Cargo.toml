@@ -1,10 +1,10 @@
 [package]
 name = "moonstone"
-version = "0.2.0-alpha.7"
+version = "0.2.0-alpha.8"
 description = "基于 Oblivion 通讯协议的端到端加密链路即时通讯客户端"
 authors = ["苏向夜 <fu050409@163.com>"]
 license = "Apache-2.0"
-repository = ""
+repository = "https://github.com/noctisynth/Moonstone"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

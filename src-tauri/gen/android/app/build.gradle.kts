@@ -31,7 +31,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = 1
-        versionName = "0.2.0-nightly.14"
+        versionName = "0.2.0-nightly.15"
     }
     signingConfigs {
         create("release") {
