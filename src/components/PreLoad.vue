@@ -27,13 +27,9 @@ const fetchData = async () => {
         return true;
     }
 
-    let callback: { status: boolean; is_alive: boolean; error: string };
-
     if (loginStore.session_key != null && loginStore.node != null) {
         info.value = "登录中...";
-        callback = JSON.parse(
-            await invoke("session_alive", { server: loginStore.node, sessionkey: loginStore.session_key })
-        );
+        const callback: { status: boolean; is_alive: boolean; error: string } = await invoke("session_alive", { server: loginStore.node, sessionkey: loginStore.session_key });
         if (callback.status) {
             if (!callback.is_alive) {
                 info.value = null;
@@ -44,9 +40,21 @@ const fetchData = async () => {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 return false;
             } else {
-                info.value = "登录验证成功！";
-                loginStore.isLoggedIn = true;
-                return true;
+                info.value = "登录验证成功，同步数据中...";
+                const res: { status: boolean, error: string, profile: any } = await invoke("get_account_profile", {
+                    node: loginStore.node,
+                    token: loginStore.session_key
+                })
+                if (res.status) {
+                    loginStore.userProfile = res.profile;
+                    loginStore.isLoggedIn = true;
+                    return true;
+                } else {
+                    info.value = null
+                    error.value = res.error
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    return false
+                }
             }
         } else {
             info.value = null;
@@ -72,14 +80,12 @@ fetchData().then((sessionAlive) => {
 </script>
 
 <template>
-    <div class="w-full h-full">
-        <div class="card flex align-items-center justify-content-center" style="padding-top: 39vh;">
-            <ProgressSpinner style="width: 17%; height: 17%" strokeWidth="3" animationDuration="1s"
-                aria-label="预加载..." />
-        </div>
-        <div class="card flex align-items-center justify-content-center" style="padding-top: 20vh;">
-            <small class="p-info" id="text-info">{{ info || null }}</small>
-            <small class="p-error" id="text-error">{{ error || null }}</small>
+    <div class="w-full h-full ">
+        <div class="flex flex-column h-full p-8 align-items-center justify-content-center">
+            <ProgressSpinner class="w-full h-full w-3" animationDuration="1s" aria-label="预加载..." />
+            <div class="flex align-items-center justify-content-center">
+                <small :class="[(info ? 'p-info' : 'p-error')]" id="text-info">{{ info || error }}</small>
+            </div>
         </div>
     </div>
 </template>

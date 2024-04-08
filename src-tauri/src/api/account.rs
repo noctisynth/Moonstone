@@ -58,9 +58,9 @@ pub async fn login(
     }
 }
 
-pub async fn account(server: &str, session_key: &str) -> Result<Value, Exception> {
+pub async fn profile(node: &str, session_key: &str) -> Result<Value, Exception> {
     let mut res = match api::post(
-        format!("{server}/account").as_str(),
+        format!("{node}/account/profile").as_str(),
         json!({"session_key": session_key}),
         true,
     )

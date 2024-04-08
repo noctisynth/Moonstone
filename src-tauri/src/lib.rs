@@ -8,16 +8,17 @@ pub mod utils {
 }
 pub mod exceptions;
 
-use api::account::{account, login, register};
+use api::account;
 use api::community;
-use api::session::alive;
+use api::session;
 use serde_json::json;
+use serde_json::Value;
 use tauri_plugin_sql::{Migration, MigrationKind};
 use utils::checks::{internet, node_status, security, system};
 
 #[tauri::command]
 async fn login_handler(server: &str, identity: &str, password: &str) -> Result<String, ()> {
-    match login(server, identity, password, "unique_id").await {
+    match account::login(server, identity, password, "unique_id").await {
         Ok(session_key) => {
             Ok(json!({"status": true, "session_key": session_key, "error": ""}).to_string())
         }
@@ -28,24 +29,20 @@ async fn login_handler(server: &str, identity: &str, password: &str) -> Result<S
 }
 
 #[tauri::command]
-async fn session_alive(server: &str, sessionkey: &str) -> Result<String, ()> {
-    match alive(server, sessionkey).await {
-        Ok(is_alive) => Ok(json!({"status": true, "is_alive": is_alive, "error": ""}).to_string()),
-        Err(error) => {
-            Ok(json!({"status": false, "is_alive": false, "error": error.to_string()}).to_string())
-        }
+async fn session_alive(server: &str, sessionkey: &str) -> Result<Value, ()> {
+    match session::alive(server, sessionkey).await {
+        Ok(is_alive) => Ok(json!({"status": true, "is_alive": is_alive, "error": ""})),
+        Err(error) => Ok(json!({"status": false, "is_alive": false, "error": error.to_string()})),
     }
 }
 
 #[tauri::command]
-async fn account_handler(server: &str, sessionkey: &str) -> Result<String, ()> {
-    match account(server, sessionkey).await {
-        Ok(mut json) => {
-            json["status"] = json!(true);
-            json["error"] = json!("null");
-            Ok(json.to_string())
+async fn get_account_profile(node: &str, token: &str) -> Result<Value, ()> {
+    match account::profile(node, token).await {
+        Ok(profile) => Ok(json!({"status": true, "error": json!("null"), "profile": profile})),
+        Err(error) => {
+            Ok(json!({"status": false, "error": error.to_string(), "profile": json!("null")}))
         }
-        Err(error) => Ok(json!({"status": false, "error": error.to_string()}).to_string()),
     }
 }
 
@@ -80,7 +77,7 @@ async fn register_handler(
     nickname: String,
     password: String,
 ) -> Result<String, ()> {
-    match register(&node, &tuta_mail, &username, &nickname, &password).await {
+    match account::register(&node, &tuta_mail, &username, &nickname, &password).await {
         Ok(_) => Ok(json!({"status": true, "error": json!("null")}).to_string()),
         Err(error) => Ok(json!({"status": false, "error": error.to_string()}).to_string()),
     }
@@ -146,7 +143,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             login_handler,
             session_alive,
-            account_handler,
+            get_account_profile,
             check_internet,
             check_system,
             check_security,

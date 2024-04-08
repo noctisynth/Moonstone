@@ -8,9 +8,14 @@ export const useLoginStore = defineStore("login", {
       isLoggedIn: false,
       node: localStorage.getItem("node"),
       session_key: localStorage.getItem("session_key"),
+      userProfile: {
+        nickname: "",
+        sex: false,
+        country: "",
+        favorites_icon: "",
+      },
     };
   },
-
   actions: {
     async setNode(node: string) {
       this.node = node;

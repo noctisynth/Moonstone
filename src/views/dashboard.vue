@@ -21,6 +21,7 @@ import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useSessionsStore } from '../stores/sessions';
 import { useRouter } from 'vue-router';
+import { useLoginStore } from '../stores/login';
 
 const router = useRouter()
 const screenWidth = ref<number>(window.innerWidth)
@@ -41,6 +42,7 @@ function onClose() {
 window.onresize = onResize;
 window.onpopstate = onClose;
 
+const loginStore = useLoginStore()
 const sessionsStore = useSessionsStore()
 
 const changeSession = (item: any) => {
@@ -151,7 +153,7 @@ onMounted(() => {
             ((mobile && selectedSession) ? 'hidden' : 'flex'),
             (mobile ? 'p-2' : 'p-3')]">
                 <div class="flex flex-column justify-content-center align-items-center">
-                    <Avatar :label="'苏'"></Avatar>
+                    <Avatar :label="(loginStore.userProfile.nickname[0])"></Avatar>
                     <Divider layout="horizontal"></Divider>
                     <Button @click="toast.add({
             'summary': '暂未开放', 'detail': '弦月测试期间插件系统暂不开放，暂不支持增删插件！', 'life': 3000, 'severity': 'warn'
