@@ -40,7 +40,7 @@ function validateMail(value: string) {
     return "请输入Tuta邮箱地址！";
   }
 
-  const regex: RegExp = /^[a-zA-Z0-9._%+-]+@(tutanota.com|tuta.com)$/
+  const regex: RegExp = /^[a-zA-Z0-9._%+-]+@(tutanota.com|tuta.com|tutamail.com|tutanota.de|tuta.io|keemail.me)$/
   if (!value.match(regex)) {
     return "不是合法的Tuta邮箱！"
   }
@@ -229,8 +229,8 @@ const inProgress = ref<boolean>(false)
                       <Password v-model="retype_password" type="text" inputId="retype-password-input" :feedback="false"
                         class="w-full" aria-describedby="retype-password-error" toggleMask placeholder="确认密码" />
                       <small v-if="invalidRetypePassword" class="p-error" id="retype-password-error">{{
-            invalidRetypePassword
-          }}</small>
+                        invalidRetypePassword
+                        }}</small>
                       <small v-if="info" class="p-info" id="text-info">{{ info }}</small>
                       <small v-if="error" class="p-error" id="text-error">{{ error }}</small>
                       <div class="flex pt-4 justify-content-between">
