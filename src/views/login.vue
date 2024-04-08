@@ -274,8 +274,8 @@ onMounted(async () => {
                         <label for="license-accept-input">我已阅读并同意月长石使用协议</label>
                       </div>
                       <small v-if="invalidLicenseAccept" class="p-error" id="license-accept-error">{{
-            invalidLicenseAccept
-          }}</small>
+                        invalidLicenseAccept
+                      }}</small>
                       <small v-if="info" class="p-info" id="text-info">{{ info }}</small>
                       <small v-if="error" class="p-error" id="text-error">{{ error }}</small>
                       <div v-if="nodeCheckOk" class="flex pt-4 justify-content-between">
@@ -284,7 +284,8 @@ onMounted(async () => {
                       </div>
                       <div v-else class="flex pt-4 justify-content-end">
                         <Button type="submit" label="检查"
-                          :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-caret-right')" iconPos="right"></Button>
+                          :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-caret-right')" iconPos="right"
+                          :disabled="inProgress"></Button>
                       </div>
                     </form>
                   </div>
@@ -329,7 +330,7 @@ onMounted(async () => {
                       <div class="flex pt-4 justify-content-between">
                         <Button label="返回" icon="pi pi-arrow-left" severity="secondary" @click="prevCallback"></Button>
                         <Button label="认证" :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-right')"
-                          type="submit" iconPos="right"></Button>
+                          type="submit" iconPos="right" :disabled="inProgress"></Button>
                       </div>
                     </form>
                   </div>

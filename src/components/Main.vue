@@ -159,11 +159,11 @@ onMounted(async () => {
                     :class="['w-full h-full inline-flex justify-content-center align-items-center', (mobile ? 'p-2 gap-2' : 'p-3 gap-3')]">
                     <IconField class="w-full h-full" icon-position="left">
                         <InputIcon class="pi pi-lock"></InputIcon>
-                        <Textarea name="message" rows="1" maxlength="512" v-model="input" auto-resize class="w-full"
-                            placeholder="发送加密信息"></Textarea>
+                        <Textarea @keydown.alter.enter="onSend" name="message" rows="1" maxlength="512" v-model="input"
+                            auto-resize class="w-full" placeholder="发送加密信息"></Textarea>
                     </IconField>
                     <div class="flex justify-content-end flex-column h-full">
-                        <Button @click="onSend" icon="pi pi-send"></Button>
+                        <Button @click="onSend" icon="pi pi-send" :disabled="!input"></Button>
                     </div>
                 </div>
             </div>

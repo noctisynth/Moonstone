@@ -76,7 +76,7 @@ const onSubmit = handleCheck(async () => {
             </div>
             <div class="mt-3 flex justify-content-end">
                 <Button type="submit" :icon="(inProgress ? 'pi pi-spin pi-spinner' : 'pi pi-check-square')" label="创建"
-                    size="small" iconPos="right"></Button>
+                    size="small" iconPos="right" :disabled="inProgress"></Button>
             </div>
         </form>
     </div>
