@@ -10,13 +10,16 @@ import Avatar from 'primevue/avatar';
 import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { generateRandomString } from '../scripts/random';
+import { invoke } from '@tauri-apps/api/core';
+import { useLoginStore } from '../stores/login';
 
 const emit = defineEmits(['onClose'])
 const toast = useToast()
+const loginStore = useLoginStore()
 let marked: any
 
-defineModel('session');
-const mobile = defineModel('mobile');
+const session = defineModel<any>('session');
+const mobile = defineModel<boolean>('mobile');
 
 if (mobile.value === null) {
     mobile.value = true
@@ -60,9 +63,17 @@ function updateStatus(id: string, status: string) {
 }
 
 async function sendMessage(value: any) {
-    toast.add({ 'severity': 'warn', 'summary': '暂未开放', 'detail': '消息接口暂未开放！', 'life': 3000 })
-    console.log(value.id)
-    updateStatus(value.id, "failed")
+    const res: { status: boolean; error: string | null } = await invoke("send_message", {
+        node: loginStore.node,
+        token: loginStore.session_key,
+        communityId: session.value.sequence,
+        messageId: value.id,
+        text: value.text,
+    });
+    if (res.status)
+        updateStatus(value.id, "check")
+    else
+        updateStatus(value.id, "failed")
 }
 
 async function onSend() {
@@ -103,23 +114,23 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-column">
-        <Toolbar class="border-noround border-left-none border-top-none p-2">
-            <template #start>
-                <div :class="['inline-flex align-items-center', (mobile ? 'gap-1' : 'pl-3 gap-3')]">
-                    <Button v-if="mobile" @click="emit('onClose')" icon="pi pi-arrow-left" plain text></Button>
-                    <span>{{ session.name }}</span>
-                </div>
-            </template>
-            <template #end>
-                <Button @click="showSidebar = true" icon="pi pi-ellipsis-h" plain text></Button>
-            </template>
-        </Toolbar>
+    <div class="w-full h-full">
         <Sidebar v-model:visible="showSidebar" :header="session.name" position="right" class="max-w-full">
             <p>此处功能区为弦月测试范围，但是尚未实装。</p>
         </Sidebar>
-        <div class="flex flex-column w-full h-full">
-            <div class="card w-full flex justify-content-center h-full">
+        <div class="w-full h-full flex flex-column">
+            <Toolbar class="border-noround border-left-none border-top-none p-2">
+                <template #start>
+                    <div :class="['inline-flex align-items-center', (mobile ? 'gap-1' : 'pl-3 gap-3')]">
+                        <Button v-if="mobile" @click="emit('onClose')" icon="pi pi-arrow-left" plain text></Button>
+                        <span>{{ session.name }}</span>
+                    </div>
+                </template>
+                <template #end>
+                    <Button @click="showSidebar = true" icon="pi pi-ellipsis-h" plain text></Button>
+                </template>
+            </Toolbar>
+            <div class="w-full flex justify-content-center h-full overflow-y-auto">
                 <Listbox v-model="selectedMessage" :options="messages" optionLabel="text" optionValue="id"
                     optionGroupLabel="user.nickname" optionGroupChildren="items" class="w-full h-full border-none">
                     <template #empty>
@@ -137,15 +148,15 @@ onMounted(async () => {
                             <div class="flex text-white flex-row justify-content-between">
                                 <div v-html="render(slot.option.text)"></div>
                                 <div class="flex align-items-center align-self-end py-1">
-                                    <Avatar v-if="slot.option.status === 'sending'" icon="pi pi-spin pi-spinner text-xs"
+                                    <Avatar v-if="slot.option.status === 'sending'" icon="pi pi-spin pi-spinner text-xxs"
                                         class="bg-primary w-1rem h-1rem" shape="circle"></Avatar>
-                                    <Avatar v-else-if="slot.option.status === 'failed'" icon="pi pi-times text-xs"
+                                    <Avatar v-else-if="slot.option.status === 'failed'" icon="pi pi-times text-xxs"
                                         class="bg-red-900 w-1rem h-1rem" shape="circle">
                                     </Avatar>
-                                    <Avatar v-else-if="slot.option.status === 'verified'" icon="pi pi-verified text-xs"
+                                    <Avatar v-else-if="slot.option.status === 'verified'" icon="pi pi-verified text-xxs"
                                         class="bg-green-900 w-1rem h-1rem" shape="circle">
                                     </Avatar>
-                                    <Avatar v-else-if="slot.option.status === 'check'" icon="pi pi-check"
+                                    <Avatar v-else-if="slot.option.status === 'check'" icon="pi pi-check text-xxs"
                                         class="bg-green-900 w-1rem h-1rem" shape="circle">
                                     </Avatar>
                                 </div>
@@ -159,7 +170,7 @@ onMounted(async () => {
                     :class="['w-full h-full inline-flex justify-content-center align-items-center', (mobile ? 'p-2 gap-2' : 'p-3 gap-3')]">
                     <IconField class="w-full h-full" icon-position="left">
                         <InputIcon class="pi pi-lock"></InputIcon>
-                        <Textarea @keydown.alter.enter="onSend" name="message" rows="1" maxlength="512" v-model="input"
+                        <Textarea @keydown.alt.enter="onSend" name="message" rows="1" maxlength="512" v-model="input"
                             auto-resize class="w-full" placeholder="发送加密信息"></Textarea>
                     </IconField>
                     <div class="flex justify-content-end flex-column h-full">
@@ -177,5 +188,9 @@ onMounted(async () => {
     line-height: 1.5;
     vertical-align: middle;
     max-height: 12em !important;
+}
+
+:deep(.text-xxs) {
+    font-size: xx-small;
 }
 </style>
