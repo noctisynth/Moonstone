@@ -12,7 +12,7 @@ pub async fn new(
     cross_origin: bool,
     token: Option<String>,
 ) -> Result<String> {
-    let mut res = match api::post(
+    let mut res = api::post(
         format!("{node}/community/new").as_str(),
         json!({
             "session_key": session_key,
@@ -23,21 +23,9 @@ pub async fn new(
         }),
         true,
     )
-    .await
-    {
-        Ok(res) => res,
-        Err(error) => {
-            return Err(Error::from(Exception::ConnectionError { error }));
-        }
-    };
-    let json = match res.json() {
-        Ok(json) => json,
-        Err(error) => {
-            return Err(Error::from(Exception::BadResponse {
-                detail: error.to_string(),
-            }));
-        }
-    };
+    .await?;
+
+    let json = res.json()?;
     match json["status"].as_bool() {
         Some(_) => {}
         None => {
