@@ -1,6 +1,7 @@
 pub mod api {
     pub mod account;
     pub mod community;
+    pub mod message;
     pub mod session;
 }
 pub mod utils {
@@ -10,6 +11,7 @@ pub mod exceptions;
 
 use api::account;
 use api::community;
+use api::message;
 use api::session;
 use serde_json::json;
 use serde_json::Value;
@@ -109,12 +111,37 @@ async fn new_community_handler(
     }
 }
 
+#[tauri::command]
+async fn send_message(
+    node: String,
+    token: String,
+    community_id: String,
+    message_id: String,
+    text: String,
+) -> Result<Value, ()> {
+    match message::new(&node, &token, &community_id, &message_id, &text).await {
+        Ok(status) => Ok(json!({"status": status, "error": json!("null")})),
+        Err(error) => Ok(json!({"status": false, "error": error.to_string()})),
+    }
+}
+
+#[tauri::command]
+async fn get_all_messages(node: String, token: String) -> Result<Value, ()> {
+    match message::get_all(&node, &token).await {
+        Ok(messages) => Ok(json!({"status": true, "error": json!("null"), "messages": messages})),
+        Err(error) => {
+            Ok(json!({"status": false, "error": error.to_string(), "messages": json!("null")}))
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let sessions_migrations = vec![Migration {
-        version: 1,
-        description: "create_initail_tables",
-        sql: r#"CREATE TABLE IF NOT EXISTS community (
+    let sessions_migrations = vec![
+        Migration {
+            version: 1,
+            description: "create_initial_tables",
+            sql: r#"CREATE TABLE IF NOT EXISTS community (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user TEXT NOT NULL,
             node TEXT NOT NULL,
@@ -130,8 +157,23 @@ pub fn run() {
             token TEXT NOT NULL
         );
         "#,
-        kind: MigrationKind::Up,
-    }];
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "create_initial_message_table",
+            sql: r#"
+        CREATE TABLE IF NOT EXISTS message (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            node TEXT NOT NULL,
+            community_id TEXT NOT NULL,
+            user_id TEXT NOT NULL,
+            text TEXT NOT NULL
+        );
+        "#,
+            kind: MigrationKind::Up,
+        },
+    ];
     tauri::Builder::default()
         .plugin(
             tauri_plugin_sql::Builder::default()
@@ -150,6 +192,8 @@ pub fn run() {
             check_node,
             register_handler,
             new_community_handler,
+            send_message,
+            get_all_messages
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
