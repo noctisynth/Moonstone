@@ -1,5 +1,5 @@
+use anyhow::Result;
 use oblivion::api::get;
-use oblivion::exceptions::OblivionException;
 use std::net::TcpStream;
 
 pub(crate) fn internet() -> bool {
@@ -20,7 +20,7 @@ pub(crate) fn security() -> bool {
     }
 }
 
-pub(crate) async fn node_status(node: &str) -> Result<(), OblivionException> {
+pub(crate) async fn node_status(node: &str) -> Result<()> {
     match get(node, true).await {
         Ok(_) => Ok(()),
         Err(e) => Err(e),
