@@ -8,6 +8,7 @@ export const useLoginStore = defineStore("login", {
       isLoggedIn: false,
       node: localStorage.getItem("node"),
       session_key: localStorage.getItem("session_key"),
+      user_id: "",
       userProfile: {
         nickname: "",
         sex: false,

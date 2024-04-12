@@ -46,7 +46,8 @@ const fetchData = async () => {
                     token: loginStore.session_key
                 })
                 if (res.status) {
-                    loginStore.userProfile = res.profile;
+                    loginStore.user_id = res.profile.id;
+                    loginStore.userProfile = res.profile.profile;
                     loginStore.isLoggedIn = true;
                     return true;
                 } else {

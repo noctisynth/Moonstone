@@ -104,7 +104,6 @@ async function onSend() {
             items: [message]
         })
     sendMessage(message);
-    console.table(messages.value)
     input.value = null;
 }
 

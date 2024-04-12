@@ -22,6 +22,7 @@ import { useToast } from 'primevue/usetoast';
 import { useSessionsStore } from '../stores/sessions';
 import { useRouter } from 'vue-router';
 import { useLoginStore } from '../stores/login';
+import { invoke } from '@tauri-apps/api/core';
 
 const router = useRouter()
 const screenWidth = ref<number>(window.innerWidth)
@@ -121,10 +122,29 @@ const items = ref([
     }
 ]);
 
+async function syncMessages() {
+    while (true) {
+        // console.log("requesting...")
+        const res: { status: boolean; error: string; messages: any } = await invoke(
+            "get_all_messages",
+            { node: loginStore.node, token: loginStore.session_key }
+        );
+        if (!res.status) {
+            toast.add({ 'severity': 'error', 'summary': '异常', 'detail': res.error, 'life': 3000 })
+            await new Promise((resolve) => setTimeout(resolve, 5000))
+            continue;
+        }
+        if (res.messages.length !== 0)
+            console.table(res.messages)
+        await new Promise((resolve) => setTimeout(resolve, 300))
+    }
+}
+
 onMounted(() => {
     console.table(sessionsStore.communities)
     onResize()
     sessionChanged()
+    syncMessages()
 })
 </script>
 
@@ -145,19 +165,19 @@ onMounted(() => {
                     <span class="font-bold white-space-nowrap">加入社群</span>
                 </div>
             </template>
-            <JoinCommunityPanel></JoinCommunityPanel>
+            <JoinCommunityPanel @on-close="showJoinCommunityPanel = false; sessionChanged()"></JoinCommunityPanel>
         </Dialog>
         <div class="flex flex-row h-full">
             <div :class="[
-            'flex-column justify-content-between align-items-center bg-surface-300 border-right-2 border-200',
-            ((mobile && selectedSession) ? 'hidden' : 'flex'),
-            (mobile ? 'p-2' : 'p-3')]">
+                'flex-column justify-content-between align-items-center bg-surface-300 border-right-2 border-200',
+                ((mobile && selectedSession) ? 'hidden' : 'flex'),
+                (mobile ? 'p-2' : 'p-3')]">
                 <div class="flex flex-column justify-content-center align-items-center">
                     <Avatar :label="(loginStore.userProfile.nickname[0])"></Avatar>
                     <Divider layout="horizontal"></Divider>
                     <Button @click="toast.add({
-            'summary': '暂未开放', 'detail': '弦月测试期间插件系统暂不开放，暂不支持增删插件！', 'life': 3000, 'severity': 'warn'
-        })" icon="pi pi-plus" plain text></Button>
+                        'summary': '暂未开放', 'detail': '弦月测试期间插件系统暂不开放，暂不支持增删插件！', 'life': 3000, 'severity': 'warn'
+                    })" icon="pi pi-plus" plain text></Button>
                 </div>
                 <div class="flex flex-column gap-3">
                     <Button @click="showDialog = true" icon="pi pi-cog" outlined></Button>

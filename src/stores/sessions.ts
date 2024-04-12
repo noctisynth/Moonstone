@@ -22,7 +22,7 @@ export const useSessionsStore = defineStore("sessions", {
       this.db = await Database.load("sqlite:sessions.db");
       this.communities = await this.db.select(
         "SELECT * from community WHERE user = $1",
-        [loginStore.session_key]
+        [loginStore.user_id]
       );
       this.initailized = true;
     },
@@ -34,28 +34,60 @@ export const useSessionsStore = defineStore("sessions", {
     ) {
       const loginStore = useLoginStore();
       if (!loginStore.node) return { status: false, msg: "节点未注册！" };
-      const res: { status: boolean; error: string; id: string } = JSON.parse(
-        await invoke("new_community_handler", {
+      const res: { status: boolean; error: string; id: string } = await invoke(
+        "new_community_handler",
+        {
           node: loginStore.node,
           sessionKey: loginStore.session_key,
           name: name,
           securityLevel: security_level,
           crossOrigin: cross_origin,
           token: token,
-        })
+        }
       );
       if (res.status) {
         await this.db.execute(
-          "INSERT OR REPLACE INTO community (user, node, sequence, name, token) VALUES ($1, $2, $3, $4, $5);  ",
-          [loginStore.session_key, loginStore.node, res.id, name, token || null]
+          "INSERT OR REPLACE INTO community (user, node, sequence, name, token) VALUES ($1, $2, $3, $4, $5);",
+          [loginStore.user_id, loginStore.node, res.id, name, token || null]
         );
         this.communities = await this.db.select(
           "SELECT * from community WHERE user = $1",
-          [loginStore.session_key]
+          [loginStore.user_id]
         );
         return { status: true, msg: "社群创建成功！" };
       } else {
         return { status: false, msg: "社群创建失败: " + res.error };
+      }
+    },
+    async addCommunity(community_id: string, token?: string) {
+      const loginStore = useLoginStore();
+      const res: { status: boolean; error: string } = await invoke(
+        "join_community_handler",
+        {
+          node: loginStore.node,
+          sessionKey: loginStore.session_key,
+          userId: loginStore.user_id,
+          communityId: community_id,
+        }
+      );
+      if (res.status) {
+        await this.db.execute(
+          "INSERT OR REPLACE INTO community (user, node, sequence, name, token) VALUES ($1, $2, $3, $4, $5);  ",
+          [
+            loginStore.user_id,
+            loginStore.node,
+            community_id,
+            "暂不支持",
+            token || null,
+          ]
+        );
+        this.communities = await this.db.select(
+          "SELECT * from community WHERE user = $1",
+          [loginStore.user_id]
+        );
+        return { status: true, msg: "社群加入成功！" };
+      } else {
+        return { status: false, msg: "社群加入失败: " + res.error };
       }
     },
   },
