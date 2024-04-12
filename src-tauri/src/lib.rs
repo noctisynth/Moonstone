@@ -93,7 +93,7 @@ async fn new_community_handler(
     security_level: i32,
     cross_origin: bool,
     token: Option<String>,
-) -> Result<String, ()> {
+) -> Result<Value, ()> {
     match community::new(
         &node,
         &session_key,
@@ -104,10 +104,21 @@ async fn new_community_handler(
     )
     .await
     {
-        Ok(id) => Ok(json!({"status": true, "error": json!("null"), "id": id}).to_string()),
-        Err(error) => Ok(
-            json!({"status": false, "error": error.to_string(), "id": json!("null")}).to_string(),
-        ),
+        Ok(id) => Ok(json!({"status": true, "error": json!("null"), "id": id})),
+        Err(error) => Ok(json!({"status": false, "error": error.to_string(), "id": json!("null")})),
+    }
+}
+
+#[tauri::command]
+async fn join_community_handler(
+    node: String,
+    session_key: String,
+    user_id: String,
+    community_id: String,
+) -> Result<Value, ()> {
+    match community::add(&node, &session_key, &user_id, &community_id).await {
+        Ok(_) => Ok(json!({"status": true, "error": json!("null")})),
+        Err(error) => Ok(json!({"status": false, "error": error.to_string()})),
     }
 }
 
@@ -193,7 +204,8 @@ pub fn run() {
             register_handler,
             new_community_handler,
             send_message,
-            get_all_messages
+            get_all_messages,
+            join_community_handler
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
