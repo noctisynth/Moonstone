@@ -1,5 +1,5 @@
 use anyhow::Result;
-use oblivion::api::get;
+use oblivion::models::client::Client;
 use std::net::TcpStream;
 
 pub(crate) fn internet() -> bool {
@@ -21,7 +21,8 @@ pub(crate) fn security() -> bool {
 }
 
 pub(crate) async fn node_status(node: &str) -> Result<()> {
-    match get(node, true).await {
+    let client = Client::connect(node).await?;
+    match client.recv().await {
         Ok(_) => Ok(()),
         Err(e) => Err(e),
     }

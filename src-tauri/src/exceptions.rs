@@ -1,4 +1,4 @@
-use oblivion::exceptions::OblivionException;
+use oblivion::exceptions::Exception as OblivionException;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

@@ -1,5 +1,5 @@
 use anyhow::{Error, Result};
-use oblivion::api;
+use oblivion::models::client::Client;
 use serde_json::json;
 
 use crate::exceptions::Exception;
@@ -12,18 +12,20 @@ pub async fn new(
     cross_origin: bool,
     token: Option<String>,
 ) -> Result<String> {
-    let mut res = api::post(
-        format!("{node}/community/new").as_str(),
-        json!({
-            "session_key": session_key,
-            "name": name,
-            "security_level": security_level,
-            "cross_origin": cross_origin,
-            "token": token
-        }),
-        true,
-    )
-    .await?;
+    let client = Client::connect(format!("{node}/community/new").as_str()).await?;
+    client
+        .send_json(
+            json!({
+                "session_key": session_key,
+                "name": name,
+                "security_level": security_level,
+                "cross_origin": cross_origin,
+                "token": token
+            }),
+            200,
+        )
+        .await?;
+    let res = client.recv().await?;
 
     let json = res.json()?;
     match json["status"].as_bool() {
@@ -39,17 +41,19 @@ pub async fn new(
 }
 
 pub async fn add(node: &str, session_key: &str, user_id: &str, community_id: &str) -> Result<()> {
-    let mut res = api::post(
-        format!("{node}/member/new").as_str(),
-        json!({
-            "node": node,
-            "token": session_key,
-            "user_id": user_id,
-            "community_id": community_id,
-        }),
-        true,
-    )
-    .await?;
+    let client = Client::connect(format!("{node}/member/new").as_str()).await?;
+    client
+        .send_json(
+            json!({
+                "node": node,
+                "token": session_key,
+                "user_id": user_id,
+                "community_id": community_id,
+            }),
+            200,
+        )
+        .await?;
+    let res = client.recv().await?;
 
     let json = res.json()?;
     match json["status"].as_bool() {
