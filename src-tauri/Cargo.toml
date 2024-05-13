@@ -1,6 +1,6 @@
 [package]
 name = "moonstone"
-version = "0.2.0-alpha.9"
+version = "0.3.0-alpha.1"
 description = "基于 Oblivion 通讯协议的端到端加密链路即时通讯客户端"
 authors = ["苏向夜 <fu050409@163.com>"]
 license = "Apache-2.0"
