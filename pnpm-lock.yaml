@@ -42,8 +42,8 @@ importers:
         specifier: ^3.4.21
         version: 3.4.21(typescript@5.4.4)
       vue-router:
-        specifier: ^4.3.0
-        version: 4.3.0(vue@3.4.21(typescript@5.4.4))
+        specifier: ^4.4.0
+        version: 4.4.0(vue@3.4.21(typescript@5.4.4))
     devDependencies:
       '@tauri-apps/cli':
         specifier: 2.0.0-beta.12
@@ -738,8 +738,8 @@ packages:
       '@vue/composition-api':
         optional: true
 
-  vue-router@4.3.0:
-    resolution: {integrity: sha512-dqUcs8tUeG+ssgWhcPbjHvazML16Oga5w34uCUmsk7i0BcnskoLGwjpa15fqMr2Fa5JgVBrdL2MEgqz6XZ/6IQ==}
+  vue-router@4.4.0:
+    resolution: {integrity: sha512-HB+t2p611aIZraV2aPSRNXf0Z/oLZFrlygJm+sZbdJaW6lcFqEDQwnzUBXn+DApw+/QzDU/I9TeWx9izEjTmsA==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -1308,7 +1308,7 @@ snapshots:
     dependencies:
       vue: 3.4.21(typescript@5.4.4)
 
-  vue-router@4.3.0(vue@3.4.21(typescript@5.4.4)):
+  vue-router@4.4.0(vue@3.4.21(typescript@5.4.4)):
     dependencies:
       '@vue/devtools-api': 6.6.1
       vue: 3.4.21(typescript@5.4.4)
