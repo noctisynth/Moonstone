@@ -42,8 +42,8 @@ importers:
         specifier: ^3.4.21
         version: 3.4.21(typescript@5.4.4)
       vue-router:
-        specifier: ^4.3.0
-        version: 4.3.0(vue@3.4.21(typescript@5.4.4))
+        specifier: ^4.4.2
+        version: 4.4.2(vue@3.4.21(typescript@5.4.4))
     devDependencies:
       '@tauri-apps/cli':
         specifier: 2.0.0-beta.12
@@ -421,6 +421,9 @@ packages:
   '@vue/devtools-api@6.6.1':
     resolution: {integrity: sha512-LgPscpE3Vs0x96PzSSB4IGVSZXZBZHpfxs+ZA1d+VEPwHdOXowy/Y2CsvCAIFrf+ssVU1pD1jidj505EpUnfbA==}
 
+  '@vue/devtools-api@6.6.3':
+    resolution: {integrity: sha512-0MiMsFma/HqA6g3KLKn+AGpL1kgKhFWszC9U29NfpWK5LE7bjeXxySWJrOJ77hBz+TBrBQ7o4QJqbPbqbs8rJw==}
+
   '@vue/language-core@1.8.27':
     resolution: {integrity: sha512-L8Kc27VdQserNaCUNiSFdDl9LWT24ly8Hpwf1ECy3aFb9m6bDhBGQYOujDm21N7EW3moKIOKEanQwe1q5BK+mA==}
     peerDependencies:
@@ -738,8 +741,8 @@ packages:
       '@vue/composition-api':
         optional: true
 
-  vue-router@4.3.0:
-    resolution: {integrity: sha512-dqUcs8tUeG+ssgWhcPbjHvazML16Oga5w34uCUmsk7i0BcnskoLGwjpa15fqMr2Fa5JgVBrdL2MEgqz6XZ/6IQ==}
+  vue-router@4.4.2:
+    resolution: {integrity: sha512-1qNybkn2L7QsLzaXs8nvlQmRKp8XF8DCxZys/Jr1JpQcHsKUxTKzTxCVA1G7NfBfwRIBgCJPoujOG5lHCCNUxw==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -1014,6 +1017,8 @@ snapshots:
       '@vue/shared': 3.4.21
 
   '@vue/devtools-api@6.6.1': {}
+
+  '@vue/devtools-api@6.6.3': {}
 
   '@vue/language-core@1.8.27(typescript@5.4.4)':
     dependencies:
@@ -1308,9 +1313,9 @@ snapshots:
     dependencies:
       vue: 3.4.21(typescript@5.4.4)
 
-  vue-router@4.3.0(vue@3.4.21(typescript@5.4.4)):
+  vue-router@4.4.2(vue@3.4.21(typescript@5.4.4)):
     dependencies:
-      '@vue/devtools-api': 6.6.1
+      '@vue/devtools-api': 6.6.3
       vue: 3.4.21(typescript@5.4.4)
 
   vue-template-compiler@2.7.16:
